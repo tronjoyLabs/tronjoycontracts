@@ -1,30 +1,42 @@
 # instalacion
+
 1. instalar tronbox
+
 ```
 npm install -g tronbox
 ```
+
 3. instalar openzeppelin
+
 ```
 npm i
 npm install @openzeppelin/contracts
 ```
+
 4. reemplazar todas las funciones isContract por isContractTron desde visual Studio en la carpeta node_modules/@openzeppelin
 
 # uso
+
 Se puede trabajar en diferentes networs. De primeras trabajamos en local para no necesitar recursos. Para levantar un nodo en local de tron:
+
 ```
 ./start_node.sh
 ```
+
 Una vez arrancado podemos lanzar el despliegue con:
+
 ```
 tronbox migrate --reset
 ```
+
 Si quisieramos otra red debemos especificarlo de la siguiente forma:
+
 ```
 tronbox migrate --reset --network shata
 ```
 
 Las configuraciones de las redes se introducen en tronbox.js
+
 ```
 networks: {
     mainnet: {
@@ -75,3 +87,9 @@ Then, run the migration with:
     },
   },
 ```
+
+TODO
+
+evento mint(usario que recibe, id del token, genetica)
+
+contrato de genética extract genetic lo tiene que hacer el contrato de mintado con el rol de setGen y en el contrato del token debe tener el rol de minter

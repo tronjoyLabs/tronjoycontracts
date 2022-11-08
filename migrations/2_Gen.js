@@ -13,4 +13,13 @@ module.exports = async function (deployer) {
   // las tendremos en un csv, seguramente tendremos que leerlo y enviarlo por bucle
   // quizas vale la pena hacer una funcion que permita enviar un array de geneticas para hacer menos transacciones
   await tJoyGenetics.addGenetic(010101010101);
+  await tJoyGenetics.addGenetic(010101010102);
+
+  const totalAvailable = await tJoyGenetics.totalAvailable();
+
+  console.log("Total available: ", totalAvailable.toNumber());
+
+  await tJoyGenetics.extractGenetic();
+
+  console.log("Total available: ", totalAvailable.toNumber());
 };
