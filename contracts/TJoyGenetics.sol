@@ -5,14 +5,22 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract TJoyGenetics is Ownable {
-    uint256[] private avalaible;
+    uint256[] private available;
     uint256[] private used;
     using SafeMath for uint256;
 
     constructor() {}
 
+    function getAvailable() public view returns (uint256[] memory) {
+        return available;
+    }
+
     function addGenetic(uint256 _gen) public onlyOwner {
-        avalaible.push(_gen);
+        available.push(_gen);
+    }
+
+    function addGenetics(uint256[] memory _genetics) public onlyOwner {
+        available = _genetics;
     }
 
     function totalUsed() public view returns (uint256) {
@@ -20,24 +28,24 @@ contract TJoyGenetics is Ownable {
     }
 
     function totalAvailable() public view returns (uint256) {
-        return avalaible.length;
+        return available.length;
     }
 
     function extractGenetic() public onlyOwner returns (uint256) {
-        uint256 _random = uint256(
+        uint256 choosenIndex = uint256(
             keccak256(
-                abi.encodePacked(
-                    block.difficulty,
-                    block.timestamp,
-                    avalaible.length
-                )
+                abi.encodePacked(block.timestamp, block.difficulty, msg.sender)
             )
-        ).mod(avalaible.length);
+        ) % available.length;
 
-        uint256 genetica = avalaible[_random];
+        uint256 genetica = available[choosenIndex];
 
-        delete avalaible[_random];
+        available[choosenIndex] = available[available.length - 1];
+
+        available.pop();
+
         used.push(genetica);
+
         return genetica;
     }
 }
