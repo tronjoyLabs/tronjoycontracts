@@ -14,4 +14,8 @@ module.exports = async function (deployer) {
   await tJoyMint.changeNfts(TJoyArcade.address);
   // asociamos el contrato de geneticas
   await tJoyMint.changeGen(TJoyGenetics.address);
+
+  console.log("Mint method:");
+
+  console.log("mint response: ", await tJoyMint.mint());
 };

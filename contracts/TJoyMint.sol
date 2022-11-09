@@ -7,17 +7,16 @@ import "./ITJoyArcade.sol";
 import "./ITJoyGenetics.sol";
 
 contract TJoyMint is Ownable {
-
     mapping(address => bool) public owners;
 
     IERC721[] private nftsCollections;
     ITJoyGenetics private gen;
-    
+
     ITJoyArcade private nfts;
 
     uint256 totalMinted = 0;
     uint256 maxMint;
-    
+
     constructor(uint256 _maxMint) {
         maxMint = _maxMint;
     }
@@ -34,13 +33,12 @@ contract TJoyMint is Ownable {
         gen = _gen;
     }
 
-    function getTotalOwners() public view returns(uint256){
+    function getTotalOwners() public view returns (uint256) {
         return totalMinted;
     }
 
-    function mint() public returns(uint256)
-    {
-        require(maxMint>totalMinted, "max minted");
+    function mint() public returns (uint256) {
+        require(maxMint > totalMinted, "max minted");
 
         require(!owners[msg.sender], "owner as minted");
 
@@ -48,10 +46,9 @@ contract TJoyMint is Ownable {
         totalMinted = totalMinted + 1;
 
         uint256 _gen = gen.extractGenetic();
-        
+
         owners[msg.sender] = true;
 
         return nfts.safeMint(msg.sender, _gen);
     }
-
 }

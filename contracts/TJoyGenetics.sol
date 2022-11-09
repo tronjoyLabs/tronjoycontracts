@@ -25,6 +25,10 @@ contract TJoyGenetics is Ownable {
         }
     }
 
+    function getUsed() public view returns (uint256[] memory) {
+        return used;
+    }
+
     function totalUsed() public view returns (uint256) {
         return used.length;
     }

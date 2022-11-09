@@ -37,23 +37,32 @@ module.exports = async function (deployer) {
     available.forEach((element) => {
       console.log(element.toNumber());
     });
+    console.log("\n");
 
-    let totalAvailable = await tJoyGenetics.totalAvailable();
+    let used = await tJoyGenetics.getUsed();
 
-    console.log("Total available: ", await totalAvailable.toNumber());
+    console.log("Used genetics:");
 
-    let totalUsed = await tJoyGenetics.totalUsed();
+    used.forEach((element) => {
+      console.log(element.toNumber());
+    });
+    console.log("\n");
 
-    console.log("Total used: ", await totalUsed.toNumber());
+    let totalAvailable = (await tJoyGenetics.totalAvailable()).toNumber();
+
+    console.log("Total available: ", totalAvailable);
+
+    let totalUsed = (await tJoyGenetics.totalUsed()).toNumber();
+
+    console.log("Total used: ", totalUsed);
   };
 
   await getInfo();
 
-  await tJoyGenetics.extractGenetic();
+  /* let totalAvailable = (await tJoyGenetics.totalAvailable()).toNumber();
 
-  await getInfo();
-
-  await tJoyGenetics.extractGenetic();
-
-  await getInfo();
+  for (let i = 0; i < totalAvailable; i++) {
+    await tJoyGenetics.extractGenetic();
+    await getInfo();
+  } */
 };
