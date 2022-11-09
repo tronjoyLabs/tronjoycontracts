@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-contract TJoyGenetics is Ownable {
+contract TJoyGenetics is Ownable, AccessControl {
     uint256[] private available;
     uint256[] private used;
     using SafeMath for uint256;
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     constructor() {}
 
@@ -37,7 +39,7 @@ contract TJoyGenetics is Ownable {
         return available.length;
     }
 
-    function extractGenetic() public onlyOwner returns (uint256) {
+    function extractGenetic() public onlyRole(MINTER_ROLE) returns (uint256) {
         uint256 choosenIndex = uint256(
             keccak256(
                 abi.encodePacked(block.timestamp, block.difficulty, msg.sender)
