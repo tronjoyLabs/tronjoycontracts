@@ -20,7 +20,9 @@ contract TJoyGenetics is Ownable {
     }
 
     function addGenetics(uint256[] memory _genetics) public onlyOwner {
-        available = _genetics;
+        for (uint256 i = 0; i < _genetics.length; i++) {
+            available.push(_genetics[i]);
+        }
     }
 
     function totalUsed() public view returns (uint256) {

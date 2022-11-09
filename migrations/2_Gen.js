@@ -16,14 +16,14 @@ module.exports = async function (deployer) {
 
   // El formato 0101010101 da problemas por tener un 0 como primer dígito
 
-  /* let firstGenetic = 1111111;
+  let firstGenetic = 1111111;
 
   let numberOfGenetics = 5;
 
   for (let i = 1; i <= numberOfGenetics; i++) {
     await tJoyGenetics.addGenetic(firstGenetic);
     firstGenetic++;
-  } */
+  }
 
   let genetics = [2222221, 2222222, 2222223, 2222224, 2222225];
 
