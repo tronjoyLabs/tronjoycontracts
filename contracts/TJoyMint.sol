@@ -22,7 +22,7 @@ contract TJoyMint is Ownable, AccessControl {
 
     constructor(uint256 _maxMint) {
         maxMint = _maxMint;
-        _grantRole(MINTER_ROLE, msg.sender);
+        _grantRole(MINTER_ROLE, address(this));
     }
 
     function addNftsCollections(IERC721 _nfts) public onlyOwner {
