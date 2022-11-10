@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "./ITJoyArcade.sol";
 import "./ITJoyGenetics.sol";
+import './MinterRole.sol';
 
-contract TJoyMint is Ownable, AccessControl {
+contract TJoyMint is Ownable, MinterRole {
     mapping(address => bool) public owners;
 
     IERC721[] private nftsCollections;
@@ -18,11 +18,10 @@ contract TJoyMint is Ownable, AccessControl {
     uint256 totalMinted = 0;
     uint256 maxMint;
 
-    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     constructor(uint256 _maxMint) {
         maxMint = _maxMint;
-        _grantRole(MINTER_ROLE, address(this));
+        
     }
 
     function addNftsCollections(IERC721 _nfts) public onlyOwner {
@@ -41,18 +40,18 @@ contract TJoyMint is Ownable, AccessControl {
         return totalMinted;
     }
 
-    function mint() public returns (uint256) {
+    function mint() public {
         require(maxMint > totalMinted, "max minted");
 
         require(!owners[msg.sender], "owner as minted");
 
-        //TODO: comprobar que tenga algun nft de las colecciones
+        //TODO: check balance partners and whitelist
         totalMinted = totalMinted + 1;
 
         uint256 _gen = gen.extractGenetic();
 
         owners[msg.sender] = true;
 
-        return nfts.safeMint(msg.sender, _gen);
+        uint256 _gen2 = nfts.safeMint(msg.sender, _gen);
     }
 }

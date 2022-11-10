@@ -1,6 +1,8 @@
-docker run -it \
+docker run -it --rm \
   -p 9090:9090 \
-  --rm \
+  -e "defaultBalance=100000" \
+  -e "showQueryString=true" \
+  -e "showBody=true" \
+  -e "formatJson=true" \
   --name tron \
-  -e "accounts=20,defaultBalance=100000" \
   trontools/quickstart

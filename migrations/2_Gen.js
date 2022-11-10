@@ -1,9 +1,25 @@
+const port = process.env.HOST_PORT || 9090;
+
+var TJoyArcade = artifacts.require("./TJoyArcade.sol");
 var TJoyGenetics = artifacts.require("./TJoyGenetics.sol");
+var TJoyMint = artifacts.require("./TJoyMint.sol");
 
 var wait = require("../scripts/helpers/wait");
+const keccak256 = require("keccak256");
+
+const TronWeb = require("tronweb");
+var fullHost = "http://127.0.0.1:" + port;
+var tronWeb = new TronWeb(
+  fullHost,
+  fullHost,
+  fullHost,
+  "da146374a75310b9666e834ee4ad0866d6f4035967bfc76217c5a495fff9f0d0"
+);
 
 module.exports = async function (deployer) {
   console.info("Deploy Genetics token");
+  await deployer.deploy(TJoyArcade);
+  const tJoyArcade = await TJoyArcade.deployed();
 
   await deployer.deploy(TJoyGenetics);
 
@@ -29,7 +45,22 @@ module.exports = async function (deployer) {
 
   await tJoyGenetics.addGenetics(genetics);
 
+  console.info("Deploy Mint token");
+  await deployer.deploy(TJoyMint, 10000);
+
+  const tJoyMint = await TJoyMint.deployed();
+
+  // asociamos el contrato de nfts con el que trabajamos
+  await tJoyMint.changeNfts(TJoyArcade.address);
+  // asociamos el contrato de geneticas
+  await tJoyMint.changeGen(TJoyGenetics.address);
+  // ponemos al minter como rol minter en el contrato del token
+  await tJoyArcade.addMinter(tJoyMint.address);
+  // ponemos al minter como rol minter en el contrato de la genetica
+  await tJoyGenetics.addMinter(tJoyMint.address);
+
   const getInfo = async () => {
+    console.log("mint response: ");
     let available = await tJoyGenetics.getAvailable();
 
     console.log("Available genetics:");
@@ -57,12 +88,17 @@ module.exports = async function (deployer) {
     console.log("Total used: ", totalUsed);
   };
 
-  await getInfo();
+  //await getInfo();
 
-  /* let totalAvailable = (await tJoyGenetics.totalAvailable()).toNumber();
-
+  const tx = await tJoyMint.mint();
+  console.log(tx);
+  await wait(10);
+  console.log(await tronWeb.trx.getTransactionInfo(tx));
+  console.log((await tJoyArcade.getGen(0)).toNumber());
+  /*
+  let totalAvailable = (await tJoyGenetics.totalAvailable()).toNumber();
   for (let i = 0; i < totalAvailable; i++) {
-    await tJoyGenetics.extractGenetic();
     await getInfo();
-  } */
+  }
+  */
 };
