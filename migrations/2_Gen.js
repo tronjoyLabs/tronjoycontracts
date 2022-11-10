@@ -60,7 +60,6 @@ module.exports = async function (deployer) {
   await tJoyGenetics.addMinter(tJoyMint.address);
 
   const getInfo = async () => {
-    console.log("mint response: ");
     let available = await tJoyGenetics.getAvailable();
 
     console.log("Available genetics:");
@@ -88,22 +87,45 @@ module.exports = async function (deployer) {
     console.log("Total used: ", totalUsed);
   };
 
-  //await getInfo();
-
-  const tx = await tJoyMint.mint();
+  /* await getInfo();
+  let tx = await tJoyMint.mint();
   console.log(tx);
-  await wait(10);
-  console.log(await tronWeb.trx.getTransactionInfo(tx));
+  await wait(10); */
+  /* console.log(await tronWeb.trx.getTransactionInfo(tx));
   console.log(
     (
       await tJoyArcade.balanceOf("4122a94aa66ebc7b68d58c92e9988f3bb02e6693a2")
     ).toNumber()
   );
-  console.log((await tJoyArcade.getGen(0)).toNumber());
+  console.log((await tJoyArcade.getGen(0)).toNumber()); */
   /*
   let totalAvailable = (await tJoyGenetics.totalAvailable()).toNumber();
   for (let i = 0; i < totalAvailable; i++) {
     await getInfo();
   }
   */
+  console.log("Estado inicial");
+  await getInfo();
+
+  console.log("Primer intento");
+  await tJoyMint.mint();
+
+  await wait(10);
+
+  console.log("Estado después del primer intento");
+  await getInfo();
+  console.log("Segundo intento");
+  await tJoyMint.mint();
+
+  await wait(10);
+
+  console.log("Estado después del segundo intento");
+  await getInfo();
+  console.log("Tercer intento");
+  await tJoyMint.mint();
+
+  await wait(10);
+
+  console.log("Estado después del tercer intento");
+  await getInfo();
 };
