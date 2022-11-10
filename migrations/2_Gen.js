@@ -94,6 +94,11 @@ module.exports = async function (deployer) {
   console.log(tx);
   await wait(10);
   console.log(await tronWeb.trx.getTransactionInfo(tx));
+  console.log(
+    (
+      await tJoyArcade.balanceOf("4122a94aa66ebc7b68d58c92e9988f3bb02e6693a2")
+    ).toNumber()
+  );
   console.log((await tJoyArcade.getGen(0)).toNumber());
   /*
   let totalAvailable = (await tJoyGenetics.totalAvailable()).toNumber();
