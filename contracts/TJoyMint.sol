@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "./ITJoyArcade.sol";
 import "./ITJoyGenetics.sol";
-import './MinterRole.sol';
+import "./MinterRole.sol";
 
 contract TJoyMint is Ownable, MinterRole {
     mapping(address => bool) public owners;
@@ -18,10 +18,8 @@ contract TJoyMint is Ownable, MinterRole {
     uint256 totalMinted = 0;
     uint256 maxMint;
 
-
     constructor(uint256 _maxMint) {
         maxMint = _maxMint;
-        
     }
 
     function addNftsCollections(IERC721 _nfts) public onlyOwner {
@@ -52,6 +50,6 @@ contract TJoyMint is Ownable, MinterRole {
 
         owners[msg.sender] = true;
 
-        uint256 _gen2 = nfts.safeMint(msg.sender, _gen);
+        nfts.safeMint(msg.sender, _gen);
     }
 }
