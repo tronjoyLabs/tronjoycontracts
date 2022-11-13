@@ -1,13 +1,13 @@
 const port = process.env.HOST_PORT || 9090;
 
-var TJoyArcade = artifacts.require("./TJoyArcade.sol");
+/* var TJoyArcade = artifacts.require("./TJoyArcade.sol"); */
 var TJoyGenetics = artifacts.require("./TJoyGenetics.sol");
 var TJoyMint = artifacts.require("./TJoyMint.sol");
 
 var wait = require("../scripts/helpers/wait");
-const keccak256 = require("keccak256");
+/* const keccak256 = require("keccak256"); */
 
-const TronWeb = require("tronweb");
+/* const TronWeb = require("tronweb");
 var fullHost = "http://127.0.0.1:" + port;
 var tronWeb = new TronWeb(
   fullHost,
@@ -15,16 +15,17 @@ var tronWeb = new TronWeb(
   fullHost,
   "da146374a75310b9666e834ee4ad0866d6f4035967bfc76217c5a495fff9f0d0"
 );
-
+ */
 module.exports = async function (deployer) {
-  console.info("Deploy Genetics token");
-  await deployer.deploy(TJoyArcade);
-  const tJoyArcade = await TJoyArcade.deployed();
+  /* console.info("Deploy Genetics token");
+  await deployer.deploy(TJoyArcade); */
+  /* const tJoyArcade = await TJoyArcade.deployed(); */
 
   await deployer.deploy(TJoyGenetics);
+  console.log("Genetics contract deployed");
 
   // esperamos a que se haya completado el deploy
-  const tJoyGenetics = await TJoyGenetics.deployed();
+  /* const tJoyGenetics = await TJoyGenetics.deployed(); */
 
   // Añadimos las geneticas
   // las tendremos en un csv, seguramente tendremos que leerlo y enviarlo por bucle
@@ -41,27 +42,27 @@ module.exports = async function (deployer) {
     firstGenetic++;
   }*/
 
-  let genetics = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  console.info("addGenetics");
-  await tJoyGenetics.addGenetics(genetics);
+  // let genetics = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  // console.info("addGenetics");
+  // await tJoyGenetics.addGenetics(genetics);
 
-  console.info("Deploy Mint token");
-  await deployer.deploy(TJoyMint, 10000);
+  // console.info("Deploy Mint token");
+  // /* await deployer.deploy(TJoyMint, 10000); */
 
-  const tJoyMint = await TJoyMint.deployed();
+  // const tJoyMint = await TJoyMint.deployed();
 
-  // asociamos el contrato de nfts con el que trabajamos
-  console.info("changeNfts");
-  await tJoyMint.changeNfts(TJoyArcade.address);
-  // asociamos el contrato de geneticas
-  console.info("changeGen");
-  await tJoyMint.changeGen(TJoyGenetics.address);
-  // ponemos al minter como rol minter en el contrato del token
-  console.info("addMinter tJoyArcade");
-  await tJoyArcade.addMinter(tJoyMint.address);
-  // ponemos al minter como rol minter en el contrato de la genetica
-  console.info("addMinter tJoyGenetics");
-  await tJoyGenetics.addMinter(tJoyMint.address);
+  // // asociamos el contrato de nfts con el que trabajamos
+  // console.info("changeNfts");
+  // await tJoyMint.changeNfts(TJoyArcade.address);
+  // // asociamos el contrato de geneticas
+  // console.info("changeGen");
+  // await tJoyMint.changeGen(TJoyGenetics.address);
+  // // ponemos al minter como rol minter en el contrato del token
+  // console.info("addMinter tJoyArcade");
+  // await tJoyArcade.addMinter(tJoyMint.address);
+  // // ponemos al minter como rol minter en el contrato de la genetica
+  // console.info("addMinter tJoyGenetics");
+  // await tJoyGenetics.addMinter(tJoyMint.address);
 
   /*const getInfo = async () => {
     let available = await tJoyGenetics.getAvailable();

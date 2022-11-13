@@ -1,5 +1,7 @@
 var wait = require("../scripts/helpers/wait");
+var TJoyArcade = artifacts.require("./TJoyArcade.sol");
 
 module.exports = async function (deployer) {
-  console.info("Deploy Arcade token");
+  await deployer.deploy(TJoyArcade);
+  console.log("Arcade contract deployed");
 };
