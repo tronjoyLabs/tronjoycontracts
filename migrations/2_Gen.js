@@ -32,17 +32,17 @@ module.exports = async function (deployer) {
 
   // El formato 0101010101 da problemas por tener un 0 como primer dígito
 
-  let firstGenetic = 1111111;
+  /*let firstGenetic = 1111111;
 
   let numberOfGenetics = 5;
 
   for (let i = 1; i <= numberOfGenetics; i++) {
     await tJoyGenetics.addGenetic(firstGenetic);
     firstGenetic++;
-  }
+  }*/
 
-  let genetics = [2222221, 2222222, 2222223, 2222224, 2222225];
-
+  let genetics = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  console.info("addGenetics");
   await tJoyGenetics.addGenetics(genetics);
 
   console.info("Deploy Mint token");
@@ -51,15 +51,19 @@ module.exports = async function (deployer) {
   const tJoyMint = await TJoyMint.deployed();
 
   // asociamos el contrato de nfts con el que trabajamos
+  console.info("changeNfts");
   await tJoyMint.changeNfts(TJoyArcade.address);
   // asociamos el contrato de geneticas
+  console.info("changeGen");
   await tJoyMint.changeGen(TJoyGenetics.address);
   // ponemos al minter como rol minter en el contrato del token
+  console.info("addMinter tJoyArcade");
   await tJoyArcade.addMinter(tJoyMint.address);
   // ponemos al minter como rol minter en el contrato de la genetica
+  console.info("addMinter tJoyGenetics");
   await tJoyGenetics.addMinter(tJoyMint.address);
 
-  const getInfo = async () => {
+  /*const getInfo = async () => {
     let available = await tJoyGenetics.getAvailable();
 
     console.log("Available genetics:");
@@ -104,7 +108,7 @@ module.exports = async function (deployer) {
     await getInfo();
   }
   */
-  console.log("Estado inicial");
+  /*console.log("Estado inicial");
   await getInfo();
 
   console.log("Primer intento");
@@ -127,5 +131,5 @@ module.exports = async function (deployer) {
   await wait(10);
 
   console.log("Estado después del tercer intento");
-  await getInfo();
+  await getInfo();*/
 };
