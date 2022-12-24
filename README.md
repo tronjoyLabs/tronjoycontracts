@@ -17,7 +17,7 @@ npm install @openzeppelin/contracts
 
 # uso
 
-Se puede trabajar en diferentes networs. De primeras trabajamos en local para no necesitar recursos. Para levantar un nodo en local de tron:
+Se puede trabajar en diferentes networks. De primeras trabajamos en local para no necesitar recursos. Para levantar un nodo en local de tron:
 
 ```
 ./start_node.sh
@@ -93,3 +93,35 @@ TODO
 evento mint(usario que recibe, id del token, genetica)
 
 contrato de genética extract genetic lo tiene que hacer el contrato de mintado con el rol de setGen y en el contrato del token debe tener el rol de minter
+
+# Testing:
+
+## Descripción:
+
+Los tests nos permitirán testear de una manera rápida todos los métodos de nuestros contratos.
+
+## Ejecución:
+
+### Compilaremos nuestros contratos en caso de no haberlo hecho:
+
+Para la compilación utilizaremos:
+
+```
+tronbox compile
+```
+
+### Levantar un nodo en local:
+
+Como ya hemos visto anteriormente, para levantar un nodo local ejecutaremos el siguiente comando:
+
+```
+./start_node.sh
+```
+
+### Ejecución de los test:
+
+Ejecutaremos para ello:
+
+```
+tronbox test
+```

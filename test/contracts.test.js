@@ -1,11 +1,13 @@
 const TJoyArcade = artifacts.require("./TJoyArcade");
 const TJoyGenetics = artifacts.require("./TJoyGenetics");
 const TJoyMint = artifacts.require("./TJoyMint");
+const TJoyTournaments = artifacts.require("./TJoyTournaments");
 
 contract("Contracts testing", function (accounts) {
   let tJoyArcade;
   let tJoyGenetics;
   let tJoyMint;
+  let tJoyTournaments;
 
   before(async function () {
     tJoyArcade = await TJoyArcade.deployed();
@@ -13,6 +15,8 @@ contract("Contracts testing", function (accounts) {
     tJoyGenetics = await TJoyGenetics.deployed();
 
     tJoyMint = await TJoyMint.deployed();
+
+    tJoyTournaments = await TJoyTournaments.deployed();
 
     await tJoyMint.changeNfts(TJoyArcade.address);
 
@@ -56,5 +60,32 @@ contract("Contracts testing", function (accounts) {
     const totalMinted = (await tJoyMint.getTotalOwners()).toNumber();
 
     assert.isTrue(totalMinted === 1);
+  });
+
+  it("Create a tournament named 'test' and check it is correctly generated", async function () {
+    await tJoyTournaments.createTournament("test");
+
+    const tournaments = await tJoyTournaments.getTournaments();
+
+    assert.isTrue(tournaments.length === 1);
+    assert.isTrue(tournaments[0].index.toNumber() === 0);
+    assert.isTrue(tournaments[0].name === "test");
+  });
+
+  it("Create another tournament called 'second-test and check its creation", async function () {
+    await tJoyTournaments.createTournament("second-test");
+
+    const tournaments = await tJoyTournaments.getTournaments();
+
+    assert.isTrue(tournaments.length === 2);
+    assert.isTrue(tournaments[1].index.toNumber() === 1);
+    assert.isTrue(tournaments[1].name === "second-test");
+  });
+
+  it("Get a contract from mapping using its index", async function () {
+    const tournament = await tJoyTournaments.getTournament(0);
+
+    assert.isTrue(tournament.index.toNumber() === 0);
+    assert.isTrue(tournament.name === "test");
   });
 });
