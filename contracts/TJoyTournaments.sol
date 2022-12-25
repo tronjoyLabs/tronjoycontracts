@@ -11,7 +11,14 @@ contract TJoyTournaments is Ownable {
         uint256 duration;
     }
 
+    struct Score {
+        uint256 tournamentId;
+        uint256 score;
+    }
+
     mapping(uint256 => Tournament) tournaments;
+
+    mapping(address => Score[]) players;
 
     uint256 nextTournamentId = 0;
 
@@ -46,5 +53,34 @@ contract TJoyTournaments is Ownable {
 
     function endTournament(uint256 _index) public payable onlyOwner {
         tournaments[_index].active = false;
+    }
+
+    function registerPlayer(uint256 _tournamentId, address _address)
+        public
+        payable
+    {
+        Score memory newScore = Score({tournamentId: _tournamentId, score: 0});
+
+        players[_address].push(newScore);
+    }
+
+    function updatePlayerScore(
+        uint256 _tournamentId,
+        uint256 _score,
+        address _address
+    ) public payable {
+        for (uint256 i = 0; i < players[_address].length; i++) {
+            if (players[_address][i].tournamentId == _tournamentId) {
+                players[_address][i].score = _score;
+            }
+        }
+    }
+
+    function getPlayerScores(address _address)
+        public
+        view
+        returns (Score[] memory)
+    {
+        return players[_address];
     }
 }

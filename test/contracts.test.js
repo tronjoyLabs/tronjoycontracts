@@ -62,7 +62,7 @@ contract("Contracts testing", function (accounts) {
     assert.isTrue(totalMinted === 1);
   });
 
-  it("Create a tournament named 'test' and check it", async () => {
+  it("Create a tournament named 'test'", async () => {
     await tJoyTournaments.createTournament("test", 5);
 
     const tournament = await tJoyTournaments.getTournament(0);
@@ -87,5 +87,34 @@ contract("Contracts testing", function (accounts) {
     const tournament = await tJoyTournaments.getTournament(0);
 
     assert.isTrue(tournament.active === false);
+  });
+
+  it("Register player in 'test' tournament", async () => {
+    await tJoyTournaments.registerPlayer(
+      0,
+      "TLVi2DGjgfq6JDa7wXn9eASwpGJZVdcUN8"
+    );
+
+    const playerScores = await tJoyTournaments.getPlayerScores(
+      "TLVi2DGjgfq6JDa7wXn9eASwpGJZVdcUN8"
+    );
+
+    assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
+    assert.isTrue(playerScores[0].score.toNumber() === 0);
+  });
+
+  it("Update player score in 'test' tournament", async () => {
+    await tJoyTournaments.updatePlayerScore(
+      0,
+      5,
+      "TLVi2DGjgfq6JDa7wXn9eASwpGJZVdcUN8"
+    );
+
+    const playerScores = await tJoyTournaments.getPlayerScores(
+      "TLVi2DGjgfq6JDa7wXn9eASwpGJZVdcUN8"
+    );
+
+    assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
+    assert.isTrue(playerScores[0].score.toNumber() === 5);
   });
 });
