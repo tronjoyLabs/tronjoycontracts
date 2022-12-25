@@ -8,17 +8,23 @@ contract TJoyTournaments is Ownable {
         uint256 index;
         string name;
         bool active;
+        uint256 duration;
     }
 
     mapping(uint256 => Tournament) tournaments;
 
     uint256 tournamentIndex = 0;
 
-    function createTournament(string memory _name) public payable onlyOwner {
+    function createTournament(string memory _name, uint256 _duration)
+        public
+        payable
+        onlyOwner
+    {
         Tournament memory newTournament = Tournament({
             index: tournamentIndex,
             name: _name,
-            active: false
+            active: false,
+            duration: _duration
         });
 
         tournaments[tournamentIndex] = newTournament;

@@ -63,13 +63,14 @@ contract("Contracts testing", function (accounts) {
   });
 
   it("Create a tournament named 'test' and check it", async () => {
-    await tJoyTournaments.createTournament("test");
+    await tJoyTournaments.createTournament("test", 5);
 
     const tournament = await tJoyTournaments.getTournament(0);
 
     assert.isTrue(tournament.index.toNumber() === 0);
     assert.isTrue(tournament.name === "test");
     assert.isTrue(tournament.active === false);
+    assert.isTrue(tournament.duration.toNumber() === 5);
   });
 
   it("Set created tournament state to active", async () => {
