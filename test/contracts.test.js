@@ -40,7 +40,7 @@ contract("Contracts testing", function (accounts) {
     assert.isTrue(used.length === 0);
   });
 
-  it("Mint a first nft for an address", async function () {
+  it("Mint a first nft for an address", async () => {
     await tJoyMint.mint();
 
     const available = await tJoyGenetics.getAvailable();
@@ -54,7 +54,7 @@ contract("Contracts testing", function (accounts) {
     assert.isTrue(totalMinted === 1);
   });
 
-  it("Try to int a second nft for an address", async function () {
+  it("Try to int a second nft for an address", async () => {
     await tJoyMint.mint();
 
     const totalMinted = (await tJoyMint.getTotalOwners()).toNumber();
@@ -62,30 +62,29 @@ contract("Contracts testing", function (accounts) {
     assert.isTrue(totalMinted === 1);
   });
 
-  it("Create a tournament named 'test' and check it is correctly generated", async function () {
+  it("Create a tournament named 'test' and check it", async () => {
     await tJoyTournaments.createTournament("test");
 
-    const tournaments = await tJoyTournaments.getTournaments();
-
-    assert.isTrue(tournaments.length === 1);
-    assert.isTrue(tournaments[0].index.toNumber() === 0);
-    assert.isTrue(tournaments[0].name === "test");
-  });
-
-  it("Create another tournament called 'second-test and check its creation", async function () {
-    await tJoyTournaments.createTournament("second-test");
-
-    const tournaments = await tJoyTournaments.getTournaments();
-
-    assert.isTrue(tournaments.length === 2);
-    assert.isTrue(tournaments[1].index.toNumber() === 1);
-    assert.isTrue(tournaments[1].name === "second-test");
-  });
-
-  it("Get a contract from mapping using its index", async function () {
     const tournament = await tJoyTournaments.getTournament(0);
 
     assert.isTrue(tournament.index.toNumber() === 0);
     assert.isTrue(tournament.name === "test");
+    assert.isTrue(tournament.active === false);
+  });
+
+  it("Set created tournament state to active", async () => {
+    await tJoyTournaments.initTournament(0);
+
+    const tournament = await tJoyTournaments.getTournament(0);
+
+    assert.isTrue(tournament.active === true);
+  });
+
+  it("Set created tournament state to no active", async () => {
+    await tJoyTournaments.endTournament(0);
+
+    const tournament = await tJoyTournaments.getTournament(0);
+
+    assert.isTrue(tournament.active === false);
   });
 });

@@ -7,29 +7,23 @@ contract TJoyTournaments is Ownable {
     struct Tournament {
         uint256 index;
         string name;
+        bool active;
     }
 
     mapping(uint256 => Tournament) tournaments;
-
-    Tournament[] tournamentsList;
 
     uint256 tournamentIndex = 0;
 
     function createTournament(string memory _name) public payable onlyOwner {
         Tournament memory newTournament = Tournament({
             index: tournamentIndex,
-            name: _name
+            name: _name,
+            active: false
         });
 
         tournaments[tournamentIndex] = newTournament;
 
-        tournamentsList.push(newTournament);
-
         tournamentIndex += 1;
-    }
-
-    function getTournaments() public view returns (Tournament[] memory) {
-        return tournamentsList;
     }
 
     function getTournament(uint256 _index)
@@ -38,5 +32,13 @@ contract TJoyTournaments is Ownable {
         returns (Tournament memory)
     {
         return tournaments[_index];
+    }
+
+    function initTournament(uint256 _index) public payable onlyOwner {
+        tournaments[_index].active = true;
+    }
+
+    function endTournament(uint256 _index) public payable onlyOwner {
+        tournaments[_index].active = false;
     }
 }
