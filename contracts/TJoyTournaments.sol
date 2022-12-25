@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract TJoyTournaments is Ownable {
     struct Tournament {
-        uint256 index;
+        uint256 id;
         string name;
         bool active;
         uint256 duration;
@@ -13,7 +13,7 @@ contract TJoyTournaments is Ownable {
 
     mapping(uint256 => Tournament) tournaments;
 
-    uint256 tournamentIndex = 0;
+    uint256 nextTournamentId = 0;
 
     function createTournament(string memory _name, uint256 _duration)
         public
@@ -21,15 +21,15 @@ contract TJoyTournaments is Ownable {
         onlyOwner
     {
         Tournament memory newTournament = Tournament({
-            index: tournamentIndex,
+            id: nextTournamentId,
             name: _name,
             active: false,
             duration: _duration
         });
 
-        tournaments[tournamentIndex] = newTournament;
+        tournaments[nextTournamentId] = newTournament;
 
-        tournamentIndex += 1;
+        nextTournamentId += 1;
     }
 
     function getTournament(uint256 _index)

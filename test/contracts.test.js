@@ -67,7 +67,7 @@ contract("Contracts testing", function (accounts) {
 
     const tournament = await tJoyTournaments.getTournament(0);
 
-    assert.isTrue(tournament.index.toNumber() === 0);
+    assert.isTrue(tournament.id.toNumber() === 0);
     assert.isTrue(tournament.name === "test");
     assert.isTrue(tournament.active === false);
     assert.isTrue(tournament.duration.toNumber() === 5);
