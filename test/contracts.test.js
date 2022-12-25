@@ -117,4 +117,19 @@ contract("Contracts testing", function (accounts) {
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 5);
   });
+
+  it("Register player in 'test' tournament for a second time", async () => {
+    await tJoyTournaments.registerPlayer(
+      0,
+      "TLVi2DGjgfq6JDa7wXn9eASwpGJZVdcUN8"
+    );
+
+    const playerScores = await tJoyTournaments.getPlayerScores(
+      "TLVi2DGjgfq6JDa7wXn9eASwpGJZVdcUN8"
+    );
+
+    console.log(playerScores);
+
+    assert.isTrue(true === true);
+  });
 });

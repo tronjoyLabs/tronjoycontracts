@@ -59,6 +59,21 @@ contract TJoyTournaments is Ownable {
         public
         payable
     {
+        Score[] memory playerScore = players[_address];
+
+        bool playerIsRegistered = false;
+
+        for (uint256 i = 0; i < playerScore.length; i++) {
+            if (playerScore[i].tournamentId == _tournamentId) {
+                playerIsRegistered = true;
+            }
+        }
+
+        require(
+            playerIsRegistered == false,
+            "This account is already registered in this tournament"
+        );
+
         Score memory newScore = Score({tournamentId: _tournamentId, score: 0});
 
         players[_address].push(newScore);

@@ -6,9 +6,15 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import './MinterRole.sol';
+import "./MinterRole.sol";
 
-contract TJoyArcade is ERC721, ERC721Enumerable, ERC721Burnable, Ownable, MinterRole {
+contract TJoyArcade is
+    ERC721,
+    ERC721Enumerable,
+    ERC721Burnable,
+    Ownable,
+    MinterRole
+{
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
@@ -17,14 +23,15 @@ contract TJoyArcade is ERC721, ERC721Enumerable, ERC721Burnable, Ownable, Minter
 
     constructor() ERC721("TronJoyArcade", "TJARC") {}
 
-
-
-    function getGen(uint256 _tokenId) public view returns(uint256) {
+    function getGen(uint256 _tokenId) public view returns (uint256) {
         return genetics[_tokenId];
     }
-    
 
-    function safeMint(address to, uint256 gen) public onlyMinter returns(uint256) {
+    function safeMint(address to, uint256 gen)
+        public
+        onlyMinter
+        returns (uint256)
+    {
         uint256 tokenId = _tokenIdCounter.current();
         genetics[tokenId] = gen;
         _tokenIdCounter.increment();
@@ -34,10 +41,11 @@ contract TJoyArcade is ERC721, ERC721Enumerable, ERC721Burnable, Ownable, Minter
 
     // The following functions are overrides required by Solidity.
 
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId)
-        internal
-        override(ERC721, ERC721Enumerable)
-    {
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal override(ERC721, ERC721Enumerable) {
         super._beforeTokenTransfer(from, to, tokenId);
     }
 

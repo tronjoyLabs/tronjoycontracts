@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import '@openzeppelin/contracts/utils/Context.sol';
-import './Roles.sol';
-
+import "@openzeppelin/contracts/utils/Context.sol";
+import "./Roles.sol";
 
 contract MinterRole is Context {
     using Roles for Roles.Role;
@@ -13,12 +12,15 @@ contract MinterRole is Context {
 
     Roles.Role private _minters;
 
-    constructor () {
+    constructor() {
         _addMinter(_msgSender());
     }
 
     modifier onlyMinter() {
-        require(isMinter(_msgSender()), "MinterRole: caller does not have the Minter role");
+        require(
+            isMinter(_msgSender()),
+            "MinterRole: caller does not have the Minter role"
+        );
         _;
     }
 
