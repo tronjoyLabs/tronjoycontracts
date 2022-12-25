@@ -14,4 +14,6 @@ interface ITJoyArcade is IERC721 {
         external
         view
         returns (uint256 tokenId);
+
+    function getNftBalance(address _address) external view returns (uint256);
 }

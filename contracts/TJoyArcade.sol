@@ -23,6 +23,10 @@ contract TJoyArcade is
 
     constructor() ERC721("TronJoyArcade", "TJARC") {}
 
+    function getNftBalance(address _address) external view returns (uint256) {
+        return _balances[_address];
+    }
+
     function getGen(uint256 _tokenId) public view returns (uint256) {
         return genetics[_tokenId];
     }

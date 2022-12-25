@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+import "./ITJoyArcade.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract TJoyTournaments is Ownable {
+    ITJoyArcade private nfts;
+
     struct Tournament {
         uint256 id;
         string name;
@@ -59,6 +62,13 @@ contract TJoyTournaments is Ownable {
         public
         payable
     {
+        /* uint256 nftBalance = nfts.getNftBalance(_address);
+
+        require(
+            nftBalance > 0,
+            "You must have a Tron Joy nft to join to a tournament"
+        ); */
+
         Score[] memory playerScore = players[_address];
 
         bool playerIsRegistered = false;

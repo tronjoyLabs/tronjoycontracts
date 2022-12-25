@@ -54,6 +54,14 @@ contract("Contracts testing", function (accounts) {
     assert.isTrue(totalMinted === 1);
   });
 
+  it("Get nft banlance for the addres which minted the previous token", async () => {
+    const balance = await tJoyArcade.getNftBalance(
+      "TVhb9bDD3UM43KhFvGGcuVz3WtexzuBM7i"
+    );
+
+    assert.isTrue(balance.toNumber() === 1);
+  });
+
   it("Try to int a second nft for an address", async () => {
     await tJoyMint.mint();
 
@@ -92,11 +100,11 @@ contract("Contracts testing", function (accounts) {
   it("Register player in 'test' tournament", async () => {
     await tJoyTournaments.registerPlayer(
       0,
-      "TLVi2DGjgfq6JDa7wXn9eASwpGJZVdcUN8"
+      "TVhb9bDD3UM43KhFvGGcuVz3WtexzuBM7i"
     );
 
     const playerScores = await tJoyTournaments.getPlayerScores(
-      "TLVi2DGjgfq6JDa7wXn9eASwpGJZVdcUN8"
+      "TVhb9bDD3UM43KhFvGGcuVz3WtexzuBM7i"
     );
 
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
@@ -107,11 +115,11 @@ contract("Contracts testing", function (accounts) {
     await tJoyTournaments.updatePlayerScore(
       0,
       5,
-      "TLVi2DGjgfq6JDa7wXn9eASwpGJZVdcUN8"
+      "TVhb9bDD3UM43KhFvGGcuVz3WtexzuBM7i"
     );
 
     const playerScores = await tJoyTournaments.getPlayerScores(
-      "TLVi2DGjgfq6JDa7wXn9eASwpGJZVdcUN8"
+      "TVhb9bDD3UM43KhFvGGcuVz3WtexzuBM7i"
     );
 
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
@@ -121,15 +129,13 @@ contract("Contracts testing", function (accounts) {
   it("Register player in 'test' tournament for a second time", async () => {
     await tJoyTournaments.registerPlayer(
       0,
-      "TLVi2DGjgfq6JDa7wXn9eASwpGJZVdcUN8"
+      "TVhb9bDD3UM43KhFvGGcuVz3WtexzuBM7i"
     );
 
     const playerScores = await tJoyTournaments.getPlayerScores(
-      "TLVi2DGjgfq6JDa7wXn9eASwpGJZVdcUN8"
+      "TVhb9bDD3UM43KhFvGGcuVz3WtexzuBM7i"
     );
 
-    console.log(playerScores);
-
-    assert.isTrue(true === true);
+    assert.isTrue(playerScores.length === 1);
   });
 });
