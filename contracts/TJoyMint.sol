@@ -11,11 +11,13 @@ contract TJoyMint is Ownable, MinterRole {
     mapping(address => bool) public owners;
 
     IERC721[] private nftsCollections;
+
     ITJoyGenetics private gen;
 
     ITJoyArcade private nfts;
 
     uint256 totalMinted = 0;
+
     uint256 maxMint;
 
     constructor(uint256 _maxMint) {

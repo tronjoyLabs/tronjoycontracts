@@ -25,6 +25,8 @@ contract("Contracts testing", function (accounts) {
     await tJoyArcade.addMinter(tJoyMint.address);
 
     await tJoyGenetics.addMinter(tJoyMint.address);
+
+    await tJoyTournaments.setNfts(TJoyArcade.address);
   });
 
   it("Add genetics to contract", async function () {
@@ -98,7 +100,7 @@ contract("Contracts testing", function (accounts) {
   });
 
   it("Register player in 'test' tournament", async () => {
-    await tJoyTournaments.registerPlayer(
+    const response = await tJoyTournaments.registerPlayer(
       0,
       "TVhb9bDD3UM43KhFvGGcuVz3WtexzuBM7i"
     );
@@ -106,6 +108,8 @@ contract("Contracts testing", function (accounts) {
     const playerScores = await tJoyTournaments.getPlayerScores(
       "TVhb9bDD3UM43KhFvGGcuVz3WtexzuBM7i"
     );
+
+    console.log(playerScores);
 
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 0);
