@@ -9,6 +9,8 @@ contract("Contracts testing", function (accounts) {
   let tJoyMint;
   let tJoyTournaments;
 
+  const testAddress = accounts[0];
+
   before(async function () {
     tJoyArcade = await TJoyArcade.deployed();
 
@@ -57,9 +59,7 @@ contract("Contracts testing", function (accounts) {
   });
 
   it("Get nft banlance for the addres which minted the previous token", async () => {
-    const balance = await tJoyArcade.getNftBalance(
-      "TVhb9bDD3UM43KhFvGGcuVz3WtexzuBM7i"
-    );
+    const balance = await tJoyArcade.getNftBalance(testAddress);
 
     assert.isTrue(balance.toNumber() === 1);
   });
@@ -100,45 +100,27 @@ contract("Contracts testing", function (accounts) {
   });
 
   it("Register player in 'test' tournament", async () => {
-    const response = await tJoyTournaments.registerPlayer(
-      0,
-      "TVhb9bDD3UM43KhFvGGcuVz3WtexzuBM7i"
-    );
+    const response = await tJoyTournaments.registerPlayer(0, testAddress);
 
-    const playerScores = await tJoyTournaments.getPlayerScores(
-      "TVhb9bDD3UM43KhFvGGcuVz3WtexzuBM7i"
-    );
-
-    console.log(playerScores);
+    const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
 
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 0);
   });
 
   it("Update player score in 'test' tournament", async () => {
-    await tJoyTournaments.updatePlayerScore(
-      0,
-      5,
-      "TVhb9bDD3UM43KhFvGGcuVz3WtexzuBM7i"
-    );
+    await tJoyTournaments.updatePlayerScore(0, 5, testAddress);
 
-    const playerScores = await tJoyTournaments.getPlayerScores(
-      "TVhb9bDD3UM43KhFvGGcuVz3WtexzuBM7i"
-    );
+    const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
 
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 5);
   });
 
   it("Register player in 'test' tournament for a second time", async () => {
-    await tJoyTournaments.registerPlayer(
-      0,
-      "TVhb9bDD3UM43KhFvGGcuVz3WtexzuBM7i"
-    );
+    await tJoyTournaments.registerPlayer(0, testAddress);
 
-    const playerScores = await tJoyTournaments.getPlayerScores(
-      "TVhb9bDD3UM43KhFvGGcuVz3WtexzuBM7i"
-    );
+    const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
 
     assert.isTrue(playerScores.length === 1);
   });
