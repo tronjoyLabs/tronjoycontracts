@@ -2,19 +2,24 @@ const TJoyArcade = artifacts.require("./TJoyArcade");
 const TJoyGenetics = artifacts.require("./TJoyGenetics");
 const TJoyMint = artifacts.require("./TJoyMint");
 const TJoyTournaments = artifacts.require("./TJoyTournaments");
-const tronweb = require("tronweb");
-
-console.log(tronweb);
+const TronWeb = require("tronweb");
 
 contract("Contracts testing", function (accounts) {
   let tJoyArcade;
   let tJoyGenetics;
   let tJoyMint;
   let tJoyTournaments;
+  let tronWeb;
 
   const testAddress = accounts[0];
 
   before(async function () {
+    tronWeb = new TronWeb({
+      fullHost: "https://api.trongrid.io",
+      privateKey:
+        "da146374a75310b9666e834ee4ad0866d6f4035967bfc76217c5a495fff9f0d0",
+    });
+
     tJoyArcade = await TJoyArcade.deployed();
     tJoyGenetics = await TJoyGenetics.deployed();
     tJoyMint = await TJoyMint.deployed();
@@ -92,11 +97,9 @@ contract("Contracts testing", function (accounts) {
     await tJoyTournaments.registerPlayer(0, testAddress);
     const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
     const tournament = await tJoyTournaments.getTournament(0);
-    console.log(tournament);
-    const addr = tournament.players[0];
-    console.log("address: ", typeof tournament.players[0]);
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 0);
+    assert.isTrue(tournament.players[0] === tronWeb.address.toHex(testAddress));
   });
 
   it("Update player score in 'test' tournament", async () => {
