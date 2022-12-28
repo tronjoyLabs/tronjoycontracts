@@ -23,6 +23,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.3",
     "@openzeppelin/contracts-upgradeable": "^4.7.3",
-    "keccak256": "^1.0.6"
+    "keccak256": "^1.0.6",
+    "tronweb": "^5.0.0"
   }
 }

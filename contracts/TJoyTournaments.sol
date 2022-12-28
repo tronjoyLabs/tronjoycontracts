@@ -27,7 +27,7 @@ contract TJoyTournaments is Ownable {
         string name;
         string state;
         uint256 duration;
-        /* Player[] players; */
+        address[] players;
     }
 
     /* struct Player {
@@ -65,11 +65,14 @@ contract TJoyTournaments is Ownable {
         payable
         onlyOwner
     {
+        address[] memory emptyPlayers;
+
         Tournament memory newTournament = Tournament({
             id: nextTournamentId,
             name: _name,
             state: tournamentStates[0],
-            duration: _duration
+            duration: _duration,
+            players: emptyPlayers
         });
 
         tournaments[nextTournamentId] = newTournament;
@@ -133,6 +136,8 @@ contract TJoyTournaments is Ownable {
         Score memory newScore = Score({tournamentId: _tournamentId, score: 0});
 
         players[_address].push(newScore);
+
+        tournaments[_tournamentId].players.push(_address);
     }
 
     // Esta función actualiza la puntuación del usuario dentro de un torneo

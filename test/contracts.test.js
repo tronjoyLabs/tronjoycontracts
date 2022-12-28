@@ -2,6 +2,9 @@ const TJoyArcade = artifacts.require("./TJoyArcade");
 const TJoyGenetics = artifacts.require("./TJoyGenetics");
 const TJoyMint = artifacts.require("./TJoyMint");
 const TJoyTournaments = artifacts.require("./TJoyTournaments");
+const tronweb = require("tronweb");
+
+console.log(tronweb);
 
 contract("Contracts testing", function (accounts) {
   let tJoyArcade;
@@ -80,14 +83,18 @@ contract("Contracts testing", function (accounts) {
   });
 
   it("Set created tournament state to finished", async () => {
-    const response = await tJoyTournaments.endTournament(0);
+    await tJoyTournaments.endTournament(0);
     const tournament = await tJoyTournaments.getTournament(0);
     assert.isTrue(tournament.state === "Finished");
   });
 
   it("Register player in 'test' tournament", async () => {
-    const response = await tJoyTournaments.registerPlayer(0, testAddress);
+    await tJoyTournaments.registerPlayer(0, testAddress);
     const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
+    const tournament = await tJoyTournaments.getTournament(0);
+    console.log(tournament);
+    const addr = tournament.players[0];
+    console.log("address: ", typeof tournament.players[0]);
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 0);
   });
