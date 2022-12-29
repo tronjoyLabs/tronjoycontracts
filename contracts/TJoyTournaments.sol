@@ -146,8 +146,12 @@ contract TJoyTournaments is Ownable {
         uint256 _score,
         address _address
     ) public payable {
+        //TODO Gestionar posibles errores y requerir que la puntuación nueva sea mayor que la actual
         for (uint256 i = 0; i < players[_address].length; i++) {
-            if (players[_address][i].tournamentId == _tournamentId) {
+            if (
+                players[_address][i].tournamentId == _tournamentId &&
+                _score > players[_address][i].score
+            ) {
                 players[_address][i].score = _score;
             }
         }
@@ -164,29 +168,39 @@ contract TJoyTournaments is Ownable {
 
     //TODO: para revisar
     // Esta función devuelve la puntuación de un jugador en un torneo concreto
-    // function getPlayerScore(uint256 _tournamentId, address _address)
-    //     public
-    //     view
-    //     returns (uint256)
-    // {
-    //     //Comprobar que el torneo existe
-    //     require(
-    //         tournaments[_tournamentId].id == _tournamentId,
-    //         "Tournament does not exist"
-    //     );
+    function getPlayerScore(uint256 _tournamentId, address _address)
+        public
+        view
+        returns (uint256)
+    {
+        //Comprobar que el torneo existe
+        require(
+            tournaments[_tournamentId].id == _tournamentId,
+            "Tournament does not exist"
+        );
 
-    //     //Comprobamos que el usuario esté registrado en el torneo
-    //     require(
-    //         players[_address].length > 0,
-    //         "This account is not registered in this tournament"
-    //     );
+        //Comprobamos que el usuario esté registrado en el torneo
+        require(
+            players[_address].length > 0,
+            "This account is not registered in this tournament"
+        );
 
-    //     for (uint256 i = 0; i < players[_address].length; i++) {
-    //         if (players[_address][i].tournamentId == _tournamentId) {
-    //             return players[_address][i].score;
-    //         }
-    //     }
-    // }
+        Score[] memory playerScores = players[_address];
+
+        bool scoreFound = false;
+        uint256 index = 0;
+        uint256 score = 0;
+
+        while (!scoreFound && index < playerScores.length) {
+            if (playerScores[index].tournamentId == _tournamentId) {
+                score = playerScores[index].score;
+                scoreFound = true;
+            }
+            index++;
+        }
+
+        return score;
+    }
 
     //TODO: para revisar
     //Funcion para cambiar la fecha de inicio de un torneo
@@ -238,7 +252,7 @@ contract TJoyTournaments is Ownable {
     // }
 
     //TODO: para revisar
-    //Obtenr los 3 mejores jugadores de un torneo
+    //Obtener los 3 mejores jugadores de un torneo
     // function getTop3Players(uint256 _tournamentId)
     //     public
     //     view
@@ -252,19 +266,19 @@ contract TJoyTournaments is Ownable {
 
     //     //Comprobar que el torneo está finalizado
     //     require(
-    //         tournaments[_tournamentId].state == TournamentStates.Finishing,
+    //         keccak256(abi.encodePacked(tournaments[_tournamentId].state)) ==
+    //             keccak256(abi.encodePacked("Finished")),
     //         "Tournament is not finished"
     //     );
 
     //     //Comprobar que hay al menos 3 jugadores registrados en el torneo
     //     require(
-    //         tournaments[_tournamentId].players > 2,
+    //         tournaments[_tournamentId].players.length > 2,
     //         "There are not enough players to get the top 3"
     //     );
 
     //     //Obtenemos los jugadores del torneo
-    //     address[] memory tournamentPlayers = tournaments[_tournamentId]
-    //         .playersAddress;
+    //     address[] memory tournamentPlayers = tournaments[_tournamentId].players;
 
     //     //Creamos un array de puntuaciones para almacenar las puntuaciones de los jugadores
     //     Score[] memory tournamentScores = new Score[](
