@@ -103,10 +103,13 @@ contract("Contracts testing", function (accounts) {
   });
 
   it("Update player score in 'test' tournament", async () => {
-    await tJoyTournaments.updatePlayerScore(0, 3, testAddress);
+    await tJoyTournaments.updatePlayerScore(0, 3);
     const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
+    const topScores = await tJoyTournaments.getTopPlayers(0);
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 3);
+    assert.isTrue(topScores.length === 1);
+    assert.isTrue(topScores[0].score.toNumber() === 3);
   });
 
   it("Register player in 'test' tournament for a second time", async () => {
@@ -121,14 +124,14 @@ contract("Contracts testing", function (accounts) {
   });
 
   it("Update player score in 'test' tournament without improvement", async () => {
-    await tJoyTournaments.updatePlayerScore(0, 2, testAddress);
+    await tJoyTournaments.updatePlayerScore(0, 2);
     const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 3);
   });
 
   it("Update player score in 'test' tournament with improvement", async () => {
-    await tJoyTournaments.updatePlayerScore(0, 5, testAddress);
+    await tJoyTournaments.updatePlayerScore(0, 5);
     const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 5);

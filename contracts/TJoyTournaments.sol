@@ -30,15 +30,15 @@ contract TJoyTournaments is Ownable {
         address[] players;
     }
 
-    /* struct Player {
-        address _addr;
-        Score[] scores;
-    } */
-
     // Declaramos un struct Score
     // Este struct tiene el id del torneo al que pertence y la puntuación propiamente dicha
     struct Score {
         uint256 tournamentId;
+        uint256 score;
+    }
+
+    struct BestScore {
+        address addr;
         uint256 score;
     }
 
@@ -49,6 +49,8 @@ contract TJoyTournaments is Ownable {
     // Cada puntuación es un struct Score que contiene el id del torneo y la puntuación
     // Se pretende que el jugador pueda tener diferentes scores, uno para cada torneo en el que participe
     mapping(address => Score[]) players;
+
+    mapping(uint256 => BestScore[]) tournamentsBests;
 
     // Esta variable la vamos a emplear para asignar ids secuenciales a los torneos
     uint256 nextTournamentId = 0;
@@ -141,18 +143,50 @@ contract TJoyTournaments is Ownable {
     }
 
     // Esta función actualiza la puntuación del usuario dentro de un torneo
-    function updatePlayerScore(
-        uint256 _tournamentId,
-        uint256 _score,
-        address _address
-    ) public payable {
+    function updatePlayerScore(uint256 _tournamentId, uint256 _score)
+        public
+        payable
+    {
+        //TODO restricción de mirar si la puntiación
         //TODO Gestionar posibles errores y requerir que la puntuación nueva sea mayor que la actual
-        for (uint256 i = 0; i < players[_address].length; i++) {
+        for (uint256 i = 0; i < players[msg.sender].length; i++) {
             if (
-                players[_address][i].tournamentId == _tournamentId &&
-                _score > players[_address][i].score
+                players[msg.sender][i].tournamentId == _tournamentId &&
+                _score > players[msg.sender][i].score
             ) {
-                players[_address][i].score = _score;
+                BestScore[] memory bestScores = tournamentsBests[_tournamentId];
+
+                if (bestScores.length == 0) {
+                    BestScore memory bestScore = BestScore({
+                        addr: msg.sender,
+                        score: _score
+                    });
+
+                    tournamentsBests[_tournamentId].push(bestScore);
+                } else {
+                    uint256 a;
+                    uint256 key;
+                    uint256 b;
+                    for (a = 1; a < _score; a++) {
+                        key = tournamentsBests[_tournamentId][a].score;
+
+                        /* Move elements of arr[0..i-1], that are
+                        greater than key, to one position ahead
+                        of their current position */
+                        while (
+                            b >= 0 &&
+                            tournamentsBests[_tournamentId][b].score > key
+                        ) {
+                            tournamentsBests[_tournamentId][
+                                b + 1
+                            ] = tournamentsBests[_tournamentId][b];
+                            b = b - 1;
+                        }
+                        tournamentsBests[_tournamentId][b + 1].score = key;
+                    }
+                }
+
+                players[msg.sender][i].score = _score;
             }
         }
     }
@@ -200,6 +234,19 @@ contract TJoyTournaments is Ownable {
         }
 
         return score;
+    }
+
+    //Obtener los mejores jugadores de un torneo
+    function getTopPlayers(uint256 _tournamentId)
+        public
+        view
+        returns (BestScore[] memory)
+    {
+        require(
+            tournaments[_tournamentId].id == _tournamentId,
+            "Tournament does not exist"
+        );
+        return tournamentsBests[_tournamentId];
     }
 
     //TODO: para revisar
