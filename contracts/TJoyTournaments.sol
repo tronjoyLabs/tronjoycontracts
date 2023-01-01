@@ -201,10 +201,6 @@ contract TJoyTournaments is Ownable {
                     }
                 }
 
-                /* if (!isAlreadyFavourite) {
-                    tournamentsBests[_tournamentId].pop();
-                } */
-
                 players[msg.sender][i].score = _score;
             }
         }
