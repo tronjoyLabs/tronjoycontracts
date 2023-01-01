@@ -147,43 +147,65 @@ contract TJoyTournaments is Ownable {
         public
         payable
     {
-        //TODO restricción de mirar si la puntiación
-        //TODO Gestionar posibles errores y requerir que la puntuación nueva sea mayor que la actual
         for (uint256 i = 0; i < players[msg.sender].length; i++) {
             if (
                 players[msg.sender][i].tournamentId == _tournamentId &&
                 _score > players[msg.sender][i].score
             ) {
-                BestScore[] memory bestScores = tournamentsBests[_tournamentId];
-
-                if (bestScores.length == 0) {
-                    BestScore memory bestScore = BestScore({
-                        addr: msg.sender,
-                        score: _score
-                    });
-
-                    tournamentsBests[_tournamentId].push(bestScore);
+                BestScore memory newBestScore = BestScore({
+                    addr: msg.sender,
+                    score: _score
+                });
+                if (tournamentsBests[_tournamentId].length == 0) {
+                    tournamentsBests[_tournamentId].push(newBestScore);
                 } else {
-                    uint256 a;
-                    uint256 key;
-                    uint256 b;
-                    for (a = 1; a < _score; a++) {
-                        key = tournamentsBests[_tournamentId][a].score;
+                    bool isAlreadyFavourite = false;
 
-                        /* Move elements of arr[0..i-1], that are
-                        greater than key, to one position ahead
-                        of their current position */
-                        while (
-                            b >= 0 &&
-                            tournamentsBests[_tournamentId][b].score > key
+                    for (
+                        uint256 j = 0;
+                        j < tournamentsBests[_tournamentId].length;
+                        j++
+                    ) {
+                        if (
+                            tournamentsBests[_tournamentId][j].addr ==
+                            msg.sender
                         ) {
-                            tournamentsBests[_tournamentId][
-                                b + 1
-                            ] = tournamentsBests[_tournamentId][b];
-                            b = b - 1;
+                            tournamentsBests[_tournamentId][j].score = _score;
+                            isAlreadyFavourite = true;
                         }
-                        tournamentsBests[_tournamentId][b + 1].score = key;
                     }
+
+                    for (
+                        uint256 k = 0;
+                        k < (tournamentsBests[_tournamentId].length - 1);
+                        k++
+                    ) {
+                        for (
+                            uint256 l = 0;
+                            l < (tournamentsBests[_tournamentId].length - 1);
+                            l++
+                        ) {
+                            if (
+                                tournamentsBests[_tournamentId][l].score <
+                                tournamentsBests[_tournamentId][l + 1].score
+                            ) {
+                                BestScore
+                                    memory minorElement = tournamentsBests[
+                                        _tournamentId
+                                    ][l];
+                                tournamentsBests[_tournamentId][
+                                    l
+                                ] = tournamentsBests[_tournamentId][l + 1];
+                                tournamentsBests[_tournamentId][
+                                    l + 1
+                                ] = minorElement;
+                            }
+                        }
+                    }
+
+                    /* if (!isAlreadyFavourite) {
+                        tournamentsBests[_tournamentId].pop();
+                    } */
                 }
 
                 players[msg.sender][i].score = _score;
