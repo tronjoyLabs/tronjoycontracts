@@ -156,57 +156,54 @@ contract TJoyTournaments is Ownable {
                     addr: msg.sender,
                     score: _score
                 });
-                if (tournamentsBests[_tournamentId].length == 0) {
-                    tournamentsBests[_tournamentId].push(newBestScore);
-                } else {
-                    bool isAlreadyFavourite = false;
 
+                bool isAlreadyFavourite = false;
+
+                for (
+                    uint256 j = 0;
+                    j < tournamentsBests[_tournamentId].length;
+                    j++
+                ) {
+                    if (tournamentsBests[_tournamentId][j].addr == msg.sender) {
+                        tournamentsBests[_tournamentId][j].score = _score;
+                        isAlreadyFavourite = true;
+                    }
+                }
+
+                if (!isAlreadyFavourite) {
+                    tournamentsBests[_tournamentId].push(newBestScore);
+                }
+
+                for (
+                    uint256 k = 0;
+                    k < (tournamentsBests[_tournamentId].length - 1);
+                    k++
+                ) {
                     for (
-                        uint256 j = 0;
-                        j < tournamentsBests[_tournamentId].length;
-                        j++
+                        uint256 l = 0;
+                        l < (tournamentsBests[_tournamentId].length - 1);
+                        l++
                     ) {
                         if (
-                            tournamentsBests[_tournamentId][j].addr ==
-                            msg.sender
+                            tournamentsBests[_tournamentId][l].score <
+                            tournamentsBests[_tournamentId][l + 1].score
                         ) {
-                            tournamentsBests[_tournamentId][j].score = _score;
-                            isAlreadyFavourite = true;
+                            BestScore memory minorElement = tournamentsBests[
+                                _tournamentId
+                            ][l];
+                            tournamentsBests[_tournamentId][
+                                l
+                            ] = tournamentsBests[_tournamentId][l + 1];
+                            tournamentsBests[_tournamentId][
+                                l + 1
+                            ] = minorElement;
                         }
                     }
-
-                    for (
-                        uint256 k = 0;
-                        k < (tournamentsBests[_tournamentId].length - 1);
-                        k++
-                    ) {
-                        for (
-                            uint256 l = 0;
-                            l < (tournamentsBests[_tournamentId].length - 1);
-                            l++
-                        ) {
-                            if (
-                                tournamentsBests[_tournamentId][l].score <
-                                tournamentsBests[_tournamentId][l + 1].score
-                            ) {
-                                BestScore
-                                    memory minorElement = tournamentsBests[
-                                        _tournamentId
-                                    ][l];
-                                tournamentsBests[_tournamentId][
-                                    l
-                                ] = tournamentsBests[_tournamentId][l + 1];
-                                tournamentsBests[_tournamentId][
-                                    l + 1
-                                ] = minorElement;
-                            }
-                        }
-                    }
-
-                    /* if (!isAlreadyFavourite) {
-                        tournamentsBests[_tournamentId].pop();
-                    } */
                 }
+
+                /* if (!isAlreadyFavourite) {
+                    tournamentsBests[_tournamentId].pop();
+                } */
 
                 players[msg.sender][i].score = _score;
             }

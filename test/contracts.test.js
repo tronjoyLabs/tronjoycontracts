@@ -42,7 +42,7 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(used.length === 0);
   });
 
-  it("Mint a first nft for an address", async () => {
+  it("Mint an nft for an address", async () => {
     await tJoyMint.mint();
     const available = await tJoyGenetics.getAvailable();
     const used = await tJoyGenetics.getUsed();
@@ -53,7 +53,7 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(totalMinted === 1);
   });
 
-  it("Mint a first nft for a second address", async () => {
+  it("Mint an nft for a second address", async () => {
     await tJoyMint.mint({ from: accounts[1] });
     const available = await tJoyGenetics.getAvailable();
     const used = await tJoyGenetics.getUsed();
@@ -64,6 +64,16 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(totalMinted === 2);
   });
 
+  it("Mint an nft for a third address", async () => {
+    await tJoyMint.mint({ from: accounts[2] });
+    const available = await tJoyGenetics.getAvailable();
+    const used = await tJoyGenetics.getUsed();
+    const totalMinted = (await tJoyMint.getTotalOwners()).toNumber();
+    assert.isTrue(available.length === 7);
+    assert.isTrue(used.length === 3);
+    assert.isTrue(totalMinted === 3);
+  });
+
   it("Get nft banlance for the addres which minted the previous token", async () => {
     const balance = await tJoyArcade.getNftBalance(testAddress);
     assert.isTrue(balance.toNumber() === 1);
@@ -72,7 +82,7 @@ contract("Contracts testing", (accounts) => {
   it("Try to mint a second nft for our testing msg.sender default address", async () => {
     await tJoyMint.mint();
     const totalMinted = (await tJoyMint.getTotalOwners()).toNumber();
-    assert.isTrue(totalMinted === 2);
+    assert.isTrue(totalMinted === 3);
   });
 
   it("Create a tournament named 'test'", async () => {
@@ -155,11 +165,49 @@ contract("Contracts testing", (accounts) => {
     await tJoyTournaments.updatePlayerScore(0, 4, { from: accounts[1] });
     const playerScores = await tJoyTournaments.getPlayerScores(accounts[1]);
     const topScores = await tJoyTournaments.getTopPlayers(0);
-    console.log(topScores);
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 4);
     assert.isTrue(topScores.length === 2);
     assert.isTrue(topScores[0].score.toNumber() === 5);
+  });
+
+  it("Update second player score in 'test' tournament", async () => {
+    await tJoyTournaments.updatePlayerScore(0, 4, { from: accounts[1] });
+    const playerScores = await tJoyTournaments.getPlayerScores(accounts[1]);
+    const topScores = await tJoyTournaments.getTopPlayers(0);
+    assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
+    assert.isTrue(playerScores[0].score.toNumber() === 4);
+    assert.isTrue(topScores.length === 2);
+    assert.isTrue(topScores[0].score.toNumber() === 5);
+  });
+
+  it("Update second player score in 'test' tournament reaching the first position", async () => {
+    await tJoyTournaments.updatePlayerScore(0, 7, { from: accounts[1] });
+    const playerScores = await tJoyTournaments.getPlayerScores(accounts[1]);
+    const topScores = await tJoyTournaments.getTopPlayers(0);
+    assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
+    assert.isTrue(playerScores[0].score.toNumber() === 7);
+    assert.isTrue(topScores.length === 2);
+    assert.isTrue(topScores[0].score.toNumber() === 7);
+  });
+
+  it("Register a third player in 'test' tournament", async () => {
+    await tJoyTournaments.registerPlayer(0, accounts[2]);
+    const playerScores = await tJoyTournaments.getPlayerScores(accounts[2]);
+    const tournament = await tJoyTournaments.getTournament(0);
+    assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
+    assert.isTrue(playerScores[0].score.toNumber() === 0);
+    assert.isTrue(tournament.players[2] === tronWeb.address.toHex(accounts[2]));
+  });
+
+  it("Update third player score in 'test' tournament", async () => {
+    await tJoyTournaments.updatePlayerScore(0, 6, { from: accounts[2] });
+    const playerScores = await tJoyTournaments.getPlayerScores(accounts[2]);
+    const topScores = await tJoyTournaments.getTopPlayers(0);
+    assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
+    assert.isTrue(playerScores[0].score.toNumber() === 6);
+    assert.isTrue(topScores.length === 3);
+    assert.isTrue(topScores[1].score.toNumber() === 6);
   });
 
   it("Set created tournament state to finished", async () => {
