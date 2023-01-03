@@ -32,6 +32,19 @@ contract("Contracts testing", (accounts) => {
     await tJoyTournaments.setNfts(TJoyArcade.address);
   });
 
+  //TODO completar este test de inyección de fondos al contrato
+  it("Inject trx into tournaments contract", async () => {
+    await tJoyTournaments.injectTrx({
+      value: 1000,
+    });
+    const address = tronWeb.address.fromHex(TJoyTournaments.address);
+    const balance = await tronWeb.trx.getBalance(
+      tronWeb.address.fromHex(TJoyTournaments.address)
+    );
+    console.log(`Balance of ${address}: ${balance}TRX`);
+    assert.isTrue(true === true);
+  });
+
   it("Add genetics to contract", async () => {
     let genetics = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     await tJoyGenetics.addGenetics(genetics);

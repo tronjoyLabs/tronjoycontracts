@@ -55,6 +55,12 @@ contract TJoyTournaments is Ownable {
     // Esta variable la vamos a emplear para asignar ids secuenciales a los torneos
     uint256 nextTournamentId = 0;
 
+    //TODO Conseguir que el owner pueda inyectar trx al contrato
+    // Con esta función injectamos trx al contrato
+    function injectTrx() public payable onlyOwner {
+        payable(address(this)).transfer(msg.value);
+    }
+
     // La siguiente función es la que nos va a servir para instanciar en interfaz de TJoyArcade
     function setNfts(ITJoyArcade _nfts) public onlyOwner {
         nfts = _nfts;
