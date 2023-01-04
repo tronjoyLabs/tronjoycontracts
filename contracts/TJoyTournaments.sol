@@ -8,6 +8,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 // Declaramos nuestro contrato que, además de tener sus propios métodos también hereda de Ownable
 contract TJoyTournaments is Ownable {
+    address public contractAddress;
+
+    address public contractOwner;
+
     // Declaramos la variable "nfts" en la que se almacenará la instancia de la interfaz de TJoyArcade
     ITJoyArcade private nfts;
 
@@ -55,10 +59,24 @@ contract TJoyTournaments is Ownable {
     // Esta variable la vamos a emplear para asignar ids secuenciales a los torneos
     uint256 nextTournamentId = 0;
 
+    constructor() {
+        contractAddress = address(this);
+        contractOwner = msg.sender;
+    }
+
     //TODO Conseguir que el owner pueda inyectar trx al contrato
     // Con esta función injectamos trx al contrato
-    function injectTrx() public payable onlyOwner {
-        payable(address(this)).transfer(msg.value);
+    function injectTrx(uint256 _amount) public payable onlyOwner {
+        require(_amount == msg.value);
+    }
+
+    // Devolvemos, por medio de esta función, el balance del contrato
+    function getContractBalance() public view returns (uint256) {
+        return contractAddress.balance;
+    }
+
+    function getOwnerBalance() public view returns (uint256) {
+        return contractOwner.balance;
     }
 
     // La siguiente función es la que nos va a servir para instanciar en interfaz de TJoyArcade

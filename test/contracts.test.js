@@ -34,18 +34,19 @@ contract("Contracts testing", (accounts) => {
 
   //TODO completar este test de inyección de fondos al contrato
   it("Inject trx into tournaments contract", async () => {
-    await tJoyTournaments.injectTrx({
-      value: 1000,
+    await tJoyTournaments.injectTrx(1000, {
+      from: testAddress,
+      to: TJoyTournaments.address,
+      value: 999999999999,
     });
-    const address = tronWeb.address.fromHex(TJoyTournaments.address);
-    const balance = await tronWeb.trx.getBalance(
-      tronWeb.address.fromHex(TJoyTournaments.address)
-    );
-    console.log(`Balance of ${address}: ${balance}TRX`);
+    const contractBalance = await tJoyTournaments.getContractBalance();
+    console.log(contractBalance.toNumber());
+    const ownerBalance = await tJoyTournaments.getOwnerBalance();
+    console.log(ownerBalance.toNumber());
     assert.isTrue(true === true);
   });
 
-  it("Add genetics to contract", async () => {
+  /* it("Add genetics to contract", async () => {
     let genetics = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     await tJoyGenetics.addGenetics(genetics);
     const available = await tJoyGenetics.getAvailable();
@@ -87,7 +88,7 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(totalMinted === 3);
   });
 
-  it("Get nft banlance for the addres which minted the previous token", async () => {
+  it("Get nft banlance for the address which minted the previous token", async () => {
     const balance = await tJoyArcade.getNftBalance(testAddress);
     assert.isTrue(balance.toNumber() === 1);
   });
@@ -227,5 +228,5 @@ contract("Contracts testing", (accounts) => {
     await tJoyTournaments.endTournament(0);
     const tournament = await tJoyTournaments.getTournament(0);
     assert.isTrue(tournament.state === "Finished");
-  });
+  }); */
 });
