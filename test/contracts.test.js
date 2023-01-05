@@ -34,15 +34,16 @@ contract("Contracts testing", (accounts) => {
 
   //TODO completar este test de inyección de fondos al contrato
   it("Inject trx into tournaments contract", async () => {
-    await tJoyTournaments.injectTrx(1000, {
+    await tJoyTournaments.injectTrx(1000000, {
       from: testAddress,
-      to: TJoyTournaments.address,
-      value: 999999999999,
+      value: 1000000,
     });
+    assert.isTrue(true === true);
+  });
+
+  it("Get contract balance", async () => {
     const contractBalance = await tJoyTournaments.getContractBalance();
-    console.log(contractBalance.toNumber());
-    const ownerBalance = await tJoyTournaments.getOwnerBalance();
-    console.log(ownerBalance.toNumber());
+    console.log(`Contract balance: ${contractBalance.toNumber()}TRX`);
     assert.isTrue(true === true);
   });
 

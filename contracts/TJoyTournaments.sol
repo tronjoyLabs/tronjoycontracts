@@ -75,10 +75,6 @@ contract TJoyTournaments is Ownable {
         return contractAddress.balance;
     }
 
-    function getOwnerBalance() public view returns (uint256) {
-        return contractOwner.balance;
-    }
-
     // La siguiente función es la que nos va a servir para instanciar en interfaz de TJoyArcade
     function setNfts(ITJoyArcade _nfts) public onlyOwner {
         nfts = _nfts;
