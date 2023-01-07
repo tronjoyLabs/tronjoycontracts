@@ -32,22 +32,7 @@ contract("Contracts testing", (accounts) => {
     await tJoyTournaments.setNfts(TJoyArcade.address);
   });
 
-  //TODO completar este test de inyección de fondos al contrato
-  it("Inject trx into tournaments contract", async () => {
-    await tJoyTournaments.injectTrx(1000000, {
-      from: testAddress,
-      value: 1000000,
-    });
-    assert.isTrue(true === true);
-  });
-
-  it("Get contract balance", async () => {
-    const contractBalance = await tJoyTournaments.getContractBalance();
-    console.log(`Contract balance: ${contractBalance.toNumber()}TRX`);
-    assert.isTrue(true === true);
-  });
-
-  /* it("Add genetics to contract", async () => {
+  it("Add genetics to contract", async () => {
     let genetics = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     await tJoyGenetics.addGenetics(genetics);
     const available = await tJoyGenetics.getAvailable();
@@ -89,6 +74,16 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(totalMinted === 3);
   });
 
+  it("Mint an nft for a fourth address", async () => {
+    await tJoyMint.mint({ from: accounts[3] });
+    const available = await tJoyGenetics.getAvailable();
+    const used = await tJoyGenetics.getUsed();
+    const totalMinted = (await tJoyMint.getTotalOwners()).toNumber();
+    assert.isTrue(available.length === 6);
+    assert.isTrue(used.length === 4);
+    assert.isTrue(totalMinted === 4);
+  });
+
   it("Get nft banlance for the address which minted the previous token", async () => {
     const balance = await tJoyArcade.getNftBalance(testAddress);
     assert.isTrue(balance.toNumber() === 1);
@@ -97,11 +92,11 @@ contract("Contracts testing", (accounts) => {
   it("Try to mint a second nft for our testing msg.sender default address", async () => {
     await tJoyMint.mint();
     const totalMinted = (await tJoyMint.getTotalOwners()).toNumber();
-    assert.isTrue(totalMinted === 3);
+    assert.isTrue(totalMinted === 4);
   });
 
   it("Create a tournament named 'test'", async () => {
-    await tJoyTournaments.createTournament("test", 5);
+    await tJoyTournaments.createTournament("test", 5, 3);
 
     const tournament = await tJoyTournaments.getTournament(0);
 
@@ -186,8 +181,8 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(topScores[0].score.toNumber() === 5);
   });
 
-  it("Update second player score in 'test' tournament", async () => {
-    await tJoyTournaments.updatePlayerScore(0, 4, { from: accounts[1] });
+  it("Update second player score in 'test' tournament with a lower score", async () => {
+    await tJoyTournaments.updatePlayerScore(0, 1, { from: accounts[1] });
     const playerScores = await tJoyTournaments.getPlayerScores(accounts[1]);
     const topScores = await tJoyTournaments.getTopPlayers(0);
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
@@ -225,9 +220,27 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(topScores[1].score.toNumber() === 6);
   });
 
+  it("Register a fourth player in 'test' tournament", async () => {
+    await tJoyTournaments.registerPlayer(0, accounts[3]);
+    const playerScores = await tJoyTournaments.getPlayerScores(accounts[3]);
+    const tournament = await tJoyTournaments.getTournament(0);
+    assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
+    assert.isTrue(playerScores[0].score.toNumber() === 0);
+    assert.isTrue(tournament.players[3] === tronWeb.address.toHex(accounts[3]));
+  });
+
+  it("Fourth player enters the top", async () => {
+    await tJoyTournaments.updatePlayerScore(0, 15, { from: accounts[3] });
+    const playerScores = await tJoyTournaments.getPlayerScores(accounts[3]);
+    const topScores = await tJoyTournaments.getTopPlayers(0);
+    assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
+    assert.isTrue(playerScores[0].score.toNumber() === 15);
+    assert.isTrue(topScores.length === 3);
+  });
+
   it("Set created tournament state to finished", async () => {
     await tJoyTournaments.endTournament(0);
     const tournament = await tJoyTournaments.getTournament(0);
     assert.isTrue(tournament.state === "Finished");
-  }); */
+  });
 });

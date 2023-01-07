@@ -32,6 +32,7 @@ contract TJoyTournaments is Ownable {
         string state;
         uint256 duration;
         address[] players;
+        uint256 numberOfAwards;
     }
 
     // Declaramos un struct Score
@@ -41,6 +42,7 @@ contract TJoyTournaments is Ownable {
         uint256 score;
     }
 
+    // Declaramos un struct que guarda mejores puntuaciones
     struct BestScore {
         address addr;
         uint256 score;
@@ -54,6 +56,7 @@ contract TJoyTournaments is Ownable {
     // Se pretende que el jugador pueda tener diferentes scores, uno para cada torneo en el que participe
     mapping(address => Score[]) players;
 
+    // Este mapeo contiene las mejores puntuaciones de cada torneo
     mapping(uint256 => BestScore[]) tournamentsBests;
 
     // Esta variable la vamos a emplear para asignar ids secuenciales a los torneos
@@ -64,7 +67,6 @@ contract TJoyTournaments is Ownable {
         contractOwner = msg.sender;
     }
 
-    //TODO Conseguir que el owner pueda inyectar trx al contrato
     // Con esta función injectamos trx al contrato
     function injectTrx(uint256 _amount) public payable onlyOwner {
         require(_amount == msg.value);
@@ -82,11 +84,11 @@ contract TJoyTournaments is Ownable {
 
     // Esta es la función que nos permite crear un nuevo torneo
     // Sólo puede ser ejecutada si la llama el propietario del contrato
-    function createTournament(string memory _name, uint256 _duration)
-        public
-        payable
-        onlyOwner
-    {
+    function createTournament(
+        string memory _name,
+        uint256 _duration,
+        uint256 _numberOfAwards
+    ) public payable onlyOwner {
         address[] memory emptyPlayers;
 
         Tournament memory newTournament = Tournament({
@@ -94,7 +96,8 @@ contract TJoyTournaments is Ownable {
             name: _name,
             state: tournamentStates[0],
             duration: _duration,
-            players: emptyPlayers
+            players: emptyPlayers,
+            numberOfAwards: _numberOfAwards
         });
 
         tournaments[nextTournamentId] = newTournament;
@@ -219,6 +222,13 @@ contract TJoyTournaments is Ownable {
                             ] = minorElement;
                         }
                     }
+                }
+
+                if (
+                    tournamentsBests[_tournamentId].length >
+                    tournaments[_tournamentId].numberOfAwards
+                ) {
+                    tournamentsBests[_tournamentId].pop();
                 }
 
                 players[msg.sender][i].score = _score;
