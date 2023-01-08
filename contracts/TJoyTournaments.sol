@@ -16,13 +16,7 @@ contract TJoyTournaments is Ownable {
     ITJoyArcade private nfts;
 
     // Declaramos un array con los posibles estados del torneo
-    string[] tournamentStates = [
-        "Preparation",
-        "Inscription",
-        "Started",
-        "Cancelled",
-        "Finished"
-    ];
+    string[] tournamentStates = ["Active", "Finished", "Cancelled"];
 
     // Declaramos un struct Tournament
     // Este struct contiene las propiedades que necesita cada torneo
@@ -30,7 +24,8 @@ contract TJoyTournaments is Ownable {
         uint256 id;
         string name;
         string state;
-        uint256 duration;
+        uint256 beginingDate;
+        uint256 finishDate;
         address[] players;
         uint256 numberOfAwards;
     }
@@ -89,7 +84,8 @@ contract TJoyTournaments is Ownable {
     // Sólo puede ser ejecutada si la llama el propietario del contrato
     function createTournament(
         string memory _name,
-        uint256 _duration,
+        uint256 _beginingDate,
+        uint256 _finishDate,
         uint256[] memory _tournamentAwards
     ) public payable onlyOwner {
         address[] memory emptyPlayers;
@@ -98,7 +94,8 @@ contract TJoyTournaments is Ownable {
             id: nextTournamentId,
             name: _name,
             state: tournamentStates[0],
-            duration: _duration,
+            beginingDate: _beginingDate,
+            finishDate: _finishDate,
             players: emptyPlayers,
             numberOfAwards: _tournamentAwards.length
         });
@@ -127,20 +124,13 @@ contract TJoyTournaments is Ownable {
         return tournamentsAwards[_id];
     }
 
-    // Esta es la función que permite al propietario habilitar la inscripción
-    function setInscription(uint256 _id) public payable onlyOwner {
-        tournaments[_id].state = tournamentStates[1];
-    }
-
-    // Esta es la función que permite al propietario iniciar un torneo
-    function initTournament(uint256 _id) public payable onlyOwner {
-        tournaments[_id].state = tournamentStates[2];
-    }
-
     // Esta función permite al propietario finalizar el torneo
     function endTournament(uint256 _id) public payable onlyOwner {
+        /* require(block.timestamp >= tournaments[_id].finishDate); */
+
         require(tournaments[_id].id == _id, "Tournament does not exist");
-        tournaments[_id].state = tournamentStates[4];
+
+        tournaments[_id].state = tournamentStates[1];
     }
 
     // Esta función permite a un usuario registrarse en un torneo
@@ -149,6 +139,8 @@ contract TJoyTournaments is Ownable {
         public
         payable
     {
+        /* require(block.timestamp >= tournaments[_tournamentId].beginingDate); */
+
         uint256 nftBalance = nfts.getNftBalance(_address);
 
         require(

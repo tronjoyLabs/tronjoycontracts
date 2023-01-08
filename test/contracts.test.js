@@ -111,31 +111,19 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Create a tournament named 'test'", async () => {
-    await tJoyTournaments.createTournament("test", 5, [100, 50, 25]);
+    const date = Date.now();
+    await tJoyTournaments.createTournament("test", date, date, [100, 50, 25]);
     const tournament = await tJoyTournaments.getTournament(0);
     const tournamentAwards = await tJoyTournaments.getTournamentAwards(0);
 
     assert.isTrue(tournament.id.toNumber() === 0);
     assert.isTrue(tournament.name === "test");
-    assert.isTrue(tournament.state === "Preparation");
-    assert.isTrue(tournament.duration.toNumber() === 5);
+    assert.isTrue(tournament.state === "Active");
+    assert.isTrue(tournament.beginingDate.toNumber() === date);
+    assert.isTrue(tournament.finishDate.toNumber() === date);
     assert.isTrue(tournamentAwards[0].toNumber() === 100);
     assert.isTrue(tournamentAwards[1].toNumber() === 50);
     assert.isTrue(tournamentAwards[2].toNumber() === 25);
-  });
-
-  it("Change tournament state to inscription", async () => {
-    await tJoyTournaments.setInscription(0);
-    const tournament = await tJoyTournaments.getTournament(0);
-
-    assert.isTrue(tournament.state === "Inscription");
-  });
-
-  it("Set created tournament state to started", async () => {
-    await tJoyTournaments.initTournament(0);
-    const tournament = await tJoyTournaments.getTournament(0);
-
-    assert.isTrue(tournament.state === "Started");
   });
 
   it("Register player in 'test' tournament", async () => {
@@ -166,7 +154,7 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(playerScores.length === 1);
   });
 
-  it("Check player score for a tournament", async () => {
+  it("Check player score for 'test' tournament", async () => {
     const score = await tJoyTournaments.getPlayerScore(0, testAddress);
 
     assert.isTrue(score.toNumber() === 3);
