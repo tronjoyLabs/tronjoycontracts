@@ -48,6 +48,9 @@ contract TJoyTournaments is Ownable {
         uint256 score;
     }
 
+    // Este mapeo continene arrays con los premios asociados al id del torneo
+    mapping(uint256 => uint256[]) tournamentsAwards;
+
     // Declaramos un mapeo para torneos con el id de cada torneo como clave y el torneo del tipo del struct Tournaments como valor
     mapping(uint256 => Tournament) tournaments;
 
@@ -68,7 +71,7 @@ contract TJoyTournaments is Ownable {
     }
 
     // Con esta función injectamos trx al contrato
-    function injectTrx(uint256 _amount) public payable onlyOwner {
+    function injectFunds(uint256 _amount) public payable onlyOwner {
         require(_amount == msg.value);
     }
 
@@ -87,7 +90,7 @@ contract TJoyTournaments is Ownable {
     function createTournament(
         string memory _name,
         uint256 _duration,
-        uint256 _numberOfAwards
+        uint256[] memory _tournamentAwards
     ) public payable onlyOwner {
         address[] memory emptyPlayers;
 
@@ -97,10 +100,12 @@ contract TJoyTournaments is Ownable {
             state: tournamentStates[0],
             duration: _duration,
             players: emptyPlayers,
-            numberOfAwards: _numberOfAwards
+            numberOfAwards: _tournamentAwards.length
         });
 
         tournaments[nextTournamentId] = newTournament;
+
+        tournamentsAwards[nextTournamentId] = _tournamentAwards;
 
         nextTournamentId += 1;
     }
@@ -112,6 +117,14 @@ contract TJoyTournaments is Ownable {
         returns (Tournament memory)
     {
         return tournaments[_id];
+    }
+
+    function getTournamentAwards(uint256 _id)
+        public
+        view
+        returns (uint256[] memory)
+    {
+        return tournamentsAwards[_id];
     }
 
     // Esta es la función que permite al propietario habilitar la inscripción

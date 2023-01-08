@@ -30,6 +30,17 @@ contract("Contracts testing", (accounts) => {
     await tJoyArcade.addMinter(tJoyMint.address);
     await tJoyGenetics.addMinter(tJoyMint.address);
     await tJoyTournaments.setNfts(TJoyArcade.address);
+
+    await tJoyTournaments.injectFunds(100, {
+      callValue: 100,
+      from: tronWeb.address.fromHex(testAddress),
+    });
+  });
+
+  it("Get tournaments contract balance", async () => {
+    const tournamentsBalance = await tJoyTournaments.getContractBalance();
+
+    assert.isTrue(tournamentsBalance.toNumber() === 100);
   });
 
   it("Add genetics to contract", async () => {
@@ -69,6 +80,7 @@ contract("Contracts testing", (accounts) => {
     const available = await tJoyGenetics.getAvailable();
     const used = await tJoyGenetics.getUsed();
     const totalMinted = (await tJoyMint.getTotalOwners()).toNumber();
+
     assert.isTrue(available.length === 7);
     assert.isTrue(used.length === 3);
     assert.isTrue(totalMinted === 3);
@@ -79,6 +91,7 @@ contract("Contracts testing", (accounts) => {
     const available = await tJoyGenetics.getAvailable();
     const used = await tJoyGenetics.getUsed();
     const totalMinted = (await tJoyMint.getTotalOwners()).toNumber();
+
     assert.isTrue(available.length === 6);
     assert.isTrue(used.length === 4);
     assert.isTrue(totalMinted === 4);
@@ -86,35 +99,42 @@ contract("Contracts testing", (accounts) => {
 
   it("Get nft banlance for the address which minted the previous token", async () => {
     const balance = await tJoyArcade.getNftBalance(testAddress);
+
     assert.isTrue(balance.toNumber() === 1);
   });
 
   it("Try to mint a second nft for our testing msg.sender default address", async () => {
     await tJoyMint.mint();
     const totalMinted = (await tJoyMint.getTotalOwners()).toNumber();
+
     assert.isTrue(totalMinted === 4);
   });
 
   it("Create a tournament named 'test'", async () => {
-    await tJoyTournaments.createTournament("test", 5, 3);
-
+    await tJoyTournaments.createTournament("test", 5, [100, 50, 25]);
     const tournament = await tJoyTournaments.getTournament(0);
+    const tournamentAwards = await tJoyTournaments.getTournamentAwards(0);
 
     assert.isTrue(tournament.id.toNumber() === 0);
     assert.isTrue(tournament.name === "test");
     assert.isTrue(tournament.state === "Preparation");
     assert.isTrue(tournament.duration.toNumber() === 5);
+    assert.isTrue(tournamentAwards[0].toNumber() === 100);
+    assert.isTrue(tournamentAwards[1].toNumber() === 50);
+    assert.isTrue(tournamentAwards[2].toNumber() === 25);
   });
 
   it("Change tournament state to inscription", async () => {
     await tJoyTournaments.setInscription(0);
     const tournament = await tJoyTournaments.getTournament(0);
+
     assert.isTrue(tournament.state === "Inscription");
   });
 
   it("Set created tournament state to started", async () => {
     await tJoyTournaments.initTournament(0);
     const tournament = await tJoyTournaments.getTournament(0);
+
     assert.isTrue(tournament.state === "Started");
   });
 
@@ -122,6 +142,7 @@ contract("Contracts testing", (accounts) => {
     await tJoyTournaments.registerPlayer(0, testAddress);
     const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
     const tournament = await tJoyTournaments.getTournament(0);
+
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 0);
     assert.isTrue(tournament.players[0] === tronWeb.address.toHex(testAddress));
@@ -131,6 +152,7 @@ contract("Contracts testing", (accounts) => {
     await tJoyTournaments.updatePlayerScore(0, 3);
     const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
     const topScores = await tJoyTournaments.getTopPlayers(0);
+
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 3);
     assert.isTrue(topScores.length === 1);
@@ -140,17 +162,20 @@ contract("Contracts testing", (accounts) => {
   it("Register player in 'test' tournament for a second time", async () => {
     await tJoyTournaments.registerPlayer(0, testAddress);
     const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
+
     assert.isTrue(playerScores.length === 1);
   });
 
   it("Check player score for a tournament", async () => {
     const score = await tJoyTournaments.getPlayerScore(0, testAddress);
+
     assert.isTrue(score.toNumber() === 3);
   });
 
   it("Update player score in 'test' tournament without improvement", async () => {
     await tJoyTournaments.updatePlayerScore(0, 2);
     const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
+
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 3);
   });
@@ -158,6 +183,7 @@ contract("Contracts testing", (accounts) => {
   it("Update player score in 'test' tournament with improvement", async () => {
     await tJoyTournaments.updatePlayerScore(0, 5);
     const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
+
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 5);
   });
@@ -166,6 +192,7 @@ contract("Contracts testing", (accounts) => {
     await tJoyTournaments.registerPlayer(0, accounts[1]);
     const playerScores = await tJoyTournaments.getPlayerScores(accounts[1]);
     const tournament = await tJoyTournaments.getTournament(0);
+
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 0);
     assert.isTrue(tournament.players[1] === tronWeb.address.toHex(accounts[1]));
@@ -175,6 +202,7 @@ contract("Contracts testing", (accounts) => {
     await tJoyTournaments.updatePlayerScore(0, 4, { from: accounts[1] });
     const playerScores = await tJoyTournaments.getPlayerScores(accounts[1]);
     const topScores = await tJoyTournaments.getTopPlayers(0);
+
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 4);
     assert.isTrue(topScores.length === 2);
@@ -185,6 +213,7 @@ contract("Contracts testing", (accounts) => {
     await tJoyTournaments.updatePlayerScore(0, 1, { from: accounts[1] });
     const playerScores = await tJoyTournaments.getPlayerScores(accounts[1]);
     const topScores = await tJoyTournaments.getTopPlayers(0);
+
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 4);
     assert.isTrue(topScores.length === 2);
@@ -195,6 +224,7 @@ contract("Contracts testing", (accounts) => {
     await tJoyTournaments.updatePlayerScore(0, 7, { from: accounts[1] });
     const playerScores = await tJoyTournaments.getPlayerScores(accounts[1]);
     const topScores = await tJoyTournaments.getTopPlayers(0);
+
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 7);
     assert.isTrue(topScores.length === 2);
@@ -205,6 +235,7 @@ contract("Contracts testing", (accounts) => {
     await tJoyTournaments.registerPlayer(0, accounts[2]);
     const playerScores = await tJoyTournaments.getPlayerScores(accounts[2]);
     const tournament = await tJoyTournaments.getTournament(0);
+
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 0);
     assert.isTrue(tournament.players[2] === tronWeb.address.toHex(accounts[2]));
@@ -214,6 +245,7 @@ contract("Contracts testing", (accounts) => {
     await tJoyTournaments.updatePlayerScore(0, 6, { from: accounts[2] });
     const playerScores = await tJoyTournaments.getPlayerScores(accounts[2]);
     const topScores = await tJoyTournaments.getTopPlayers(0);
+
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 6);
     assert.isTrue(topScores.length === 3);
@@ -224,6 +256,7 @@ contract("Contracts testing", (accounts) => {
     await tJoyTournaments.registerPlayer(0, accounts[3]);
     const playerScores = await tJoyTournaments.getPlayerScores(accounts[3]);
     const tournament = await tJoyTournaments.getTournament(0);
+
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 0);
     assert.isTrue(tournament.players[3] === tronWeb.address.toHex(accounts[3]));
@@ -233,6 +266,7 @@ contract("Contracts testing", (accounts) => {
     await tJoyTournaments.updatePlayerScore(0, 15, { from: accounts[3] });
     const playerScores = await tJoyTournaments.getPlayerScores(accounts[3]);
     const topScores = await tJoyTournaments.getTopPlayers(0);
+
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 15);
     assert.isTrue(topScores.length === 3);
@@ -241,6 +275,7 @@ contract("Contracts testing", (accounts) => {
   it("Set created tournament state to finished", async () => {
     await tJoyTournaments.endTournament(0);
     const tournament = await tJoyTournaments.getTournament(0);
+
     assert.isTrue(tournament.state === "Finished");
   });
 });
