@@ -131,6 +131,12 @@ contract TJoyTournaments is Ownable {
         require(tournaments[_id].id == _id, "Tournament does not exist");
 
         tournaments[_id].state = tournamentStates[1];
+
+        BestScore[] memory bestScores = tournamentsBests[_id];
+
+        for (uint256 i = 0; i < bestScores.length; i++) {
+            payable(bestScores[i].addr).transfer(tournamentsAwards[_id][i]);
+        }
     }
 
     // Esta función permite a un usuario registrarse en un torneo

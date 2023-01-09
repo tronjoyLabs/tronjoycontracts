@@ -31,8 +31,8 @@ contract("Contracts testing", (accounts) => {
     await tJoyGenetics.addMinter(tJoyMint.address);
     await tJoyTournaments.setNfts(TJoyArcade.address);
 
-    await tJoyTournaments.injectFunds(100, {
-      callValue: 100,
+    await tJoyTournaments.injectFunds(1000, {
+      callValue: 1000,
       from: tronWeb.address.fromHex(testAddress),
     });
   });
@@ -40,7 +40,7 @@ contract("Contracts testing", (accounts) => {
   it("Get tournaments contract balance", async () => {
     const tournamentsBalance = await tJoyTournaments.getContractBalance();
 
-    assert.isTrue(tournamentsBalance.toNumber() === 100);
+    assert.isTrue(tournamentsBalance.toNumber() === 1000);
   });
 
   it("Add genetics to contract", async () => {
@@ -263,7 +263,9 @@ contract("Contracts testing", (accounts) => {
   it("Set created tournament state to finished", async () => {
     await tJoyTournaments.endTournament(0);
     const tournament = await tJoyTournaments.getTournament(0);
+    const tournamentBalance = await tJoyTournaments.getContractBalance();
 
     assert.isTrue(tournament.state === "Finished");
+    assert.isTrue(tournamentBalance.toNumber() === 825);
   });
 });
