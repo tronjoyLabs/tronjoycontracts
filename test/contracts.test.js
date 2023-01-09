@@ -118,12 +118,12 @@ contract("Contracts testing", (accounts) => {
 
     assert.isTrue(tournament.id.toNumber() === 0);
     assert.isTrue(tournament.name === "test");
-    assert.isTrue(tournament.state === "Active");
+    assert.isTrue(tournament.paused === false);
     assert.isTrue(tournament.beginingDate.toNumber() === date);
     assert.isTrue(tournament.finishDate.toNumber() === date);
-    assert.isTrue(tournamentAwards[0].toNumber() === 100);
-    assert.isTrue(tournamentAwards[1].toNumber() === 50);
-    assert.isTrue(tournamentAwards[2].toNumber() === 25);
+    assert.isTrue(tournamentAwards[0].amount.toNumber() === 100);
+    assert.isTrue(tournamentAwards[1].amount.toNumber() === 50);
+    assert.isTrue(tournamentAwards[2].amount.toNumber() === 25);
   });
 
   it("Register player in 'test' tournament", async () => {
@@ -260,12 +260,10 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(topScores.length === 3);
   });
 
-  it("Set created tournament state to finished", async () => {
-    await tJoyTournaments.endTournament(0);
-    const tournament = await tJoyTournaments.getTournament(0);
-    const tournamentBalance = await tJoyTournaments.getContractBalance();
+  it("Claim first reward", async () => {
+    await tJoyTournaments.claimRewards(0, { from: accounts[3] });
+    const contractBalance = await tJoyTournaments.getContractBalance();
 
-    assert.isTrue(tournament.state === "Finished");
-    assert.isTrue(tournamentBalance.toNumber() === 825);
+    assert.isTrue(contractBalance.toNumber() === 900);
   });
 });

@@ -15,15 +15,12 @@ contract TJoyTournaments is Ownable {
     // Declaramos la variable "nfts" en la que se almacenará la instancia de la interfaz de TJoyArcade
     ITJoyArcade private nfts;
 
-    // Declaramos un array con los posibles estados del torneo
-    string[] tournamentStates = ["Active", "Finished", "Cancelled"];
-
     // Declaramos un struct Tournament
     // Este struct contiene las propiedades que necesita cada torneo
     struct Tournament {
         uint256 id;
         string name;
-        string state;
+        bool paused;
         uint256 beginingDate;
         uint256 finishDate;
         address[] players;
@@ -43,8 +40,13 @@ contract TJoyTournaments is Ownable {
         uint256 score;
     }
 
+    struct Award {
+        uint256 amount;
+        bool claimed;
+    }
+
     // Este mapeo continene arrays con los premios asociados al id del torneo
-    mapping(uint256 => uint256[]) tournamentsAwards;
+    mapping(uint256 => Award[]) tournamentsAwards;
 
     // Declaramos un mapeo para torneos con el id de cada torneo como clave y el torneo del tipo del struct Tournaments como valor
     mapping(uint256 => Tournament) tournaments;
@@ -90,10 +92,19 @@ contract TJoyTournaments is Ownable {
     ) public payable onlyOwner {
         address[] memory emptyPlayers;
 
+        for (uint256 i = 0; i < _tournamentAwards.length; i++) {
+            Award memory newAward = Award({
+                amount: _tournamentAwards[i],
+                claimed: false
+            });
+
+            tournamentsAwards[nextTournamentId].push(newAward);
+        }
+
         Tournament memory newTournament = Tournament({
             id: nextTournamentId,
             name: _name,
-            state: tournamentStates[0],
+            paused: false,
             beginingDate: _beginingDate,
             finishDate: _finishDate,
             players: emptyPlayers,
@@ -101,8 +112,6 @@ contract TJoyTournaments is Ownable {
         });
 
         tournaments[nextTournamentId] = newTournament;
-
-        tournamentsAwards[nextTournamentId] = _tournamentAwards;
 
         nextTournamentId += 1;
     }
@@ -119,24 +128,9 @@ contract TJoyTournaments is Ownable {
     function getTournamentAwards(uint256 _id)
         public
         view
-        returns (uint256[] memory)
+        returns (Award[] memory)
     {
         return tournamentsAwards[_id];
-    }
-
-    // Esta función permite al propietario finalizar el torneo
-    function endTournament(uint256 _id) public payable onlyOwner {
-        /* require(block.timestamp >= tournaments[_id].finishDate); */
-
-        require(tournaments[_id].id == _id, "Tournament does not exist");
-
-        tournaments[_id].state = tournamentStates[1];
-
-        BestScore[] memory bestScores = tournamentsBests[_id];
-
-        for (uint256 i = 0; i < bestScores.length; i++) {
-            payable(bestScores[i].addr).transfer(tournamentsAwards[_id][i]);
-        }
     }
 
     // Esta función permite a un usuario registrarse en un torneo
@@ -181,6 +175,8 @@ contract TJoyTournaments is Ownable {
         public
         payable
     {
+        /* require(block.timestamp >= tournaments[_tournamentId].beginingDate); */
+
         for (uint256 i = 0; i < players[msg.sender].length; i++) {
             if (
                 players[msg.sender][i].tournamentId == _tournamentId &&
@@ -256,7 +252,6 @@ contract TJoyTournaments is Ownable {
         return players[_address];
     }
 
-    //TODO: para revisar
     // Esta función devuelve la puntuación de un jugador en un torneo concreto
     function getPlayerScore(uint256 _tournamentId, address _address)
         public
@@ -269,7 +264,7 @@ contract TJoyTournaments is Ownable {
             "Tournament does not exist"
         );
 
-        //Comprobamos que el usuario esté registrado en el torneo
+        // Comprobamos que el usuario esté registrado en el torneo
         require(
             players[_address].length > 0,
             "This account is not registered in this tournament"
@@ -292,7 +287,7 @@ contract TJoyTournaments is Ownable {
         return score;
     }
 
-    //Obtener los mejores jugadores de un torneo
+    // Obtener los mejores jugadores de un torneo
     function getTopPlayers(uint256 _tournamentId)
         public
         view
@@ -303,6 +298,36 @@ contract TJoyTournaments is Ownable {
             "Tournament does not exist"
         );
         return tournamentsBests[_tournamentId];
+    }
+
+    // Función para reclamar recompensas
+    function claimRewards(uint256 _tournamentId) public payable {
+        // require(block.timestamp >= tournaments[_tournamentId].finishDate);
+
+        bool rewardClaimed = false;
+
+        uint256 index = 0;
+
+        while (
+            rewardClaimed == false &&
+            index < tournamentsAwards[_tournamentId].length
+        ) {
+            if (tournamentsBests[_tournamentId][index].addr == msg.sender) {
+                require(
+                    tournamentsAwards[_tournamentId][index].claimed == false
+                );
+
+                payable(msg.sender).transfer(
+                    tournamentsAwards[_tournamentId][index].amount
+                );
+
+                tournamentsAwards[_tournamentId][index].claimed = true;
+
+                rewardClaimed = true;
+            } else {
+                index++;
+            }
+        }
     }
 
     //TODO: para revisar
@@ -417,4 +442,10 @@ contract TJoyTournaments is Ownable {
 
     //     return top3;
     // }
+
+    /* BestScore[] memory bestScores = tournamentsBests[_id];
+
+        for (uint256 i = 0; i < bestScores.length; i++) {
+            payable(bestScores[i].addr).transfer(tournamentsAwards[_id][i]);
+    s} */
 }
