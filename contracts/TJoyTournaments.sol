@@ -139,7 +139,14 @@ contract TJoyTournaments is Ownable {
         public
         payable
     {
-        /* require(block.timestamp >= tournaments[_tournamentId].beginingDate); */
+        require(
+            block.timestamp >= tournaments[_tournamentId].beginingDate,
+            "This tournament has not started yet"
+        );
+        require(
+            block.timestamp <= tournaments[_tournamentId].finishDate,
+            "This tournament has already finished"
+        );
 
         uint256 nftBalance = nfts.getNftBalance(_address);
 
@@ -175,7 +182,14 @@ contract TJoyTournaments is Ownable {
         public
         payable
     {
-        /* require(block.timestamp >= tournaments[_tournamentId].beginingDate); */
+        require(
+            block.timestamp >= tournaments[_tournamentId].beginingDate,
+            "This tournament has not started yet"
+        );
+        require(
+            block.timestamp <= tournaments[_tournamentId].finishDate,
+            "This tournament has already finished"
+        );
 
         for (uint256 i = 0; i < players[msg.sender].length; i++) {
             if (
@@ -302,7 +316,10 @@ contract TJoyTournaments is Ownable {
 
     // Función para reclamar recompensas
     function claimRewards(uint256 _tournamentId) public payable {
-        // require(block.timestamp >= tournaments[_tournamentId].finishDate);
+        require(
+            block.timestamp >= tournaments[_tournamentId].finishDate,
+            "This tournament has not finished yet"
+        );
 
         bool rewardClaimed = false;
 

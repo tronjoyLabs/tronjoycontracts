@@ -127,6 +127,7 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Register player in 'test' tournament", async () => {
+    await sleep(1000 * (secs || 1));
     await tJoyTournaments.registerPlayer(0, testAddress);
     const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
     const tournament = await tJoyTournaments.getTournament(0);
