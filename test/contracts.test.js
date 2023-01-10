@@ -4,6 +4,10 @@ const TJoyMint = artifacts.require("./TJoyMint");
 const TJoyTournaments = artifacts.require("./TJoyTournaments");
 const TronWeb = require("tronweb");
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 contract("Contracts testing", (accounts) => {
   let tJoyArcade;
   let tJoyGenetics;
@@ -111,8 +115,15 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Create a tournament named 'test'", async () => {
-    const date = Date.now();
-    await tJoyTournaments.createTournament("test", date, date, [100, 50, 25]);
+    const date = parseInt(Date.now() / 1000);
+    const dateFinish = date + 3600;
+    await tJoyTournaments.createTournament(
+      "test",
+      date,
+      dateFinish,
+      [100, 50, 25]
+    );
+
     const tournament = await tJoyTournaments.getTournament(0);
     const tournamentAwards = await tJoyTournaments.getTournamentAwards(0);
 
@@ -120,15 +131,16 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(tournament.name === "test");
     assert.isTrue(tournament.paused === false);
     assert.isTrue(tournament.beginingDate.toNumber() === date);
-    assert.isTrue(tournament.finishDate.toNumber() === date);
+    assert.isTrue(tournament.finishDate.toNumber() === dateFinish);
     assert.isTrue(tournamentAwards[0].amount.toNumber() === 100);
     assert.isTrue(tournamentAwards[1].amount.toNumber() === 50);
     assert.isTrue(tournamentAwards[2].amount.toNumber() === 25);
   });
 
   it("Register player in 'test' tournament", async () => {
-    await sleep(1000 * (secs || 1));
+    await sleep(1000 * 1);
     await tJoyTournaments.registerPlayer(0, testAddress);
+    await sleep(1000 * 1);
     const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
     const tournament = await tJoyTournaments.getTournament(0);
 

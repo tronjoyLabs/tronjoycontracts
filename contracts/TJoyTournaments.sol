@@ -133,6 +133,10 @@ contract TJoyTournaments is Ownable {
         return tournamentsAwards[_id];
     }
 
+    function getTimestamp() public returns (uint256) {
+        return block.timestamp;
+    }
+
     // Esta función permite a un usuario registrarse en un torneo
     // Los requerimientos son que posea, al menos, un nft de TJoyArcade y que no se encuentre ya registrado en ese mismo torneo
     function registerPlayer(uint256 _tournamentId, address _address)
