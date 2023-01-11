@@ -116,7 +116,7 @@ contract("Contracts testing", (accounts) => {
 
   it("Create a tournament named 'test'", async () => {
     const date = parseInt(Date.now() / 1000);
-    const dateFinish = date + 3600;
+    const dateFinish = date + 130;
     await tJoyTournaments.createTournament(
       "test",
       date,
@@ -138,19 +138,20 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Register player in 'test' tournament", async () => {
-    await sleep(1000 * 1);
+    await sleep(5000);
     await tJoyTournaments.registerPlayer(0, testAddress);
-    await sleep(1000 * 1);
+    await sleep(5000);
     const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
     const tournament = await tJoyTournaments.getTournament(0);
-
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
     assert.isTrue(playerScores[0].score.toNumber() === 0);
     assert.isTrue(tournament.players[0] === tronWeb.address.toHex(testAddress));
   });
 
   it("Update player score in 'test' tournament", async () => {
+    await sleep(5000);
     await tJoyTournaments.updatePlayerScore(0, 3);
+    await sleep(5000);
     const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
     const topScores = await tJoyTournaments.getTopPlayers(0);
 
@@ -161,20 +162,20 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Register player in 'test' tournament for a second time", async () => {
+    await sleep(5000);
     await tJoyTournaments.registerPlayer(0, testAddress);
+    await sleep(5000);
     const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
-
-    assert.isTrue(playerScores.length === 1);
-  });
-
-  it("Check player score for 'test' tournament", async () => {
     const score = await tJoyTournaments.getPlayerScore(0, testAddress);
 
+    assert.isTrue(playerScores.length === 1);
     assert.isTrue(score.toNumber() === 3);
   });
 
   it("Update player score in 'test' tournament without improvement", async () => {
+    await sleep(5000);
     await tJoyTournaments.updatePlayerScore(0, 2);
+    await sleep(5000);
     const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
 
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
@@ -182,7 +183,9 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Update player score in 'test' tournament with improvement", async () => {
+    await sleep(5000);
     await tJoyTournaments.updatePlayerScore(0, 5);
+    await sleep(5000);
     const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
 
     assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
@@ -190,7 +193,9 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Register a second player in 'test' tournament", async () => {
+    await sleep(5000);
     await tJoyTournaments.registerPlayer(0, accounts[1]);
+    await sleep(5000);
     const playerScores = await tJoyTournaments.getPlayerScores(accounts[1]);
     const tournament = await tJoyTournaments.getTournament(0);
 
@@ -200,7 +205,9 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Update second player score in 'test' tournament", async () => {
+    await sleep(5000);
     await tJoyTournaments.updatePlayerScore(0, 4, { from: accounts[1] });
+    await sleep(5000);
     const playerScores = await tJoyTournaments.getPlayerScores(accounts[1]);
     const topScores = await tJoyTournaments.getTopPlayers(0);
 
@@ -211,7 +218,9 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Update second player score in 'test' tournament with a lower score", async () => {
+    await sleep(5000);
     await tJoyTournaments.updatePlayerScore(0, 1, { from: accounts[1] });
+    await sleep(5000);
     const playerScores = await tJoyTournaments.getPlayerScores(accounts[1]);
     const topScores = await tJoyTournaments.getTopPlayers(0);
 
@@ -222,7 +231,9 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Update second player score in 'test' tournament reaching the first position", async () => {
+    await sleep(5000);
     await tJoyTournaments.updatePlayerScore(0, 7, { from: accounts[1] });
+    await sleep(5000);
     const playerScores = await tJoyTournaments.getPlayerScores(accounts[1]);
     const topScores = await tJoyTournaments.getTopPlayers(0);
 
@@ -233,7 +244,9 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Register a third player in 'test' tournament", async () => {
+    await sleep(5000);
     await tJoyTournaments.registerPlayer(0, accounts[2]);
+    await sleep(5000);
     const playerScores = await tJoyTournaments.getPlayerScores(accounts[2]);
     const tournament = await tJoyTournaments.getTournament(0);
 
@@ -243,7 +256,9 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Update third player score in 'test' tournament", async () => {
+    await sleep(5000);
     await tJoyTournaments.updatePlayerScore(0, 6, { from: accounts[2] });
+    await sleep(5000);
     const playerScores = await tJoyTournaments.getPlayerScores(accounts[2]);
     const topScores = await tJoyTournaments.getTopPlayers(0);
 
@@ -254,7 +269,9 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Register a fourth player in 'test' tournament", async () => {
+    await sleep(5000);
     await tJoyTournaments.registerPlayer(0, accounts[3]);
+    await sleep(5000);
     const playerScores = await tJoyTournaments.getPlayerScores(accounts[3]);
     const tournament = await tJoyTournaments.getTournament(0);
 
@@ -264,7 +281,9 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Fourth player enters the top", async () => {
+    await sleep(5000);
     await tJoyTournaments.updatePlayerScore(0, 15, { from: accounts[3] });
+    await sleep(5000);
     const playerScores = await tJoyTournaments.getPlayerScores(accounts[3]);
     const topScores = await tJoyTournaments.getTopPlayers(0);
 
@@ -274,7 +293,9 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Claim first reward", async () => {
+    await sleep(20000);
     await tJoyTournaments.claimRewards(0, { from: accounts[3] });
+    await sleep(5000);
     const contractBalance = await tJoyTournaments.getContractBalance();
 
     assert.isTrue(contractBalance.toNumber() === 900);
