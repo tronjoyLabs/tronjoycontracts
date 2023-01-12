@@ -21,9 +21,10 @@ contract TJoyTournaments is Ownable {
         uint256 id;
         string name;
         bool paused;
+        uint256 initPool;
+        uint256 payPool;
         uint256 beginingDate;
         uint256 finishDate;
-        address[] players;
         uint256 numberOfAwards;
     }
 
@@ -152,114 +153,10 @@ contract TJoyTournaments is Ownable {
             "This tournament has already finished"
         );
 
-        uint256 nftBalance = nfts.getNftBalance(_address);
-
-        require(
-            nftBalance > 0,
-            "You must have a Tron Joy nft to join to a tournament"
-        );
-
-        Score[] memory playerScore = players[_address];
-
-        bool playerIsRegistered = false;
-
-        for (uint256 i = 0; i < playerScore.length; i++) {
-            if (playerScore[i].tournamentId == _tournamentId) {
-                playerIsRegistered = true;
-            }
-        }
-
-        require(
-            playerIsRegistered == false,
-            "This account is already registered in this tournament"
-        );
-
-        Score memory newScore = Score({tournamentId: _tournamentId, score: 0});
-
-        players[_address].push(newScore);
-
-        tournaments[_tournamentId].players.push(_address);
+        emit Register(toroiu, asdjao)
     }
 
-    // Esta función actualiza la puntuación del usuario dentro de un torneo
-    function updatePlayerScore(uint256 _tournamentId, uint256 _score)
-        public
-        payable
-    {
-        require(
-            block.timestamp >= tournaments[_tournamentId].beginingDate,
-            "This tournament has not started yet"
-        );
-        require(
-            block.timestamp <= tournaments[_tournamentId].finishDate,
-            "This tournament has already finished"
-        );
 
-        for (uint256 i = 0; i < players[msg.sender].length; i++) {
-            if (
-                players[msg.sender][i].tournamentId == _tournamentId &&
-                _score > players[msg.sender][i].score
-            ) {
-                BestScore memory newBestScore = BestScore({
-                    addr: msg.sender,
-                    score: _score
-                });
-
-                bool isAlreadyFavourite = false;
-
-                for (
-                    uint256 j = 0;
-                    j < tournamentsBests[_tournamentId].length;
-                    j++
-                ) {
-                    if (tournamentsBests[_tournamentId][j].addr == msg.sender) {
-                        tournamentsBests[_tournamentId][j].score = _score;
-                        isAlreadyFavourite = true;
-                    }
-                }
-
-                if (!isAlreadyFavourite) {
-                    tournamentsBests[_tournamentId].push(newBestScore);
-                }
-
-                for (
-                    uint256 k = 0;
-                    k < (tournamentsBests[_tournamentId].length - 1);
-                    k++
-                ) {
-                    for (
-                        uint256 l = 0;
-                        l < (tournamentsBests[_tournamentId].length - 1);
-                        l++
-                    ) {
-                        if (
-                            tournamentsBests[_tournamentId][l].score <
-                            tournamentsBests[_tournamentId][l + 1].score
-                        ) {
-                            BestScore memory minorElement = tournamentsBests[
-                                _tournamentId
-                            ][l];
-                            tournamentsBests[_tournamentId][
-                                l
-                            ] = tournamentsBests[_tournamentId][l + 1];
-                            tournamentsBests[_tournamentId][
-                                l + 1
-                            ] = minorElement;
-                        }
-                    }
-                }
-
-                if (
-                    tournamentsBests[_tournamentId].length >
-                    tournaments[_tournamentId].numberOfAwards
-                ) {
-                    tournamentsBests[_tournamentId].pop();
-                }
-
-                players[msg.sender][i].score = _score;
-            }
-        }
-    }
 
     // La siguiente función devuelve las puntuaciones de todos los torneos en los que ha participado un jugador
     function getPlayerScores(address _address)
