@@ -256,10 +256,16 @@ contract TJoyTournaments is Ownable {
                 require(
                     tournamentsAwards[_tournamentId][index].claimed == false
                 );
-
-                payable(msg.sender).transfer(
-                    tournamentsAwards[_tournamentId][index].amount
-                );
+                if(tournamentsAwards[_tournamentId][index].amount) {
+                    payable(msg.sender).transfer(
+                        tournamentsAwards[_tournamentId][index].amount
+                    );
+                }
+                if(tournamentsAwards[_tournamentId][index].nft) {
+                    payable(msg.sender).transfer(
+                        tournamentsAwards[_tournamentId][index].nft
+                    );
+                }
 
                 tournamentsAwards[_tournamentId][index].claimed = true;
 
