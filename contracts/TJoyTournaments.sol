@@ -29,7 +29,7 @@ contract TJoyTournaments is Ownable {
         uint256 numberOfAwards;
     }
 
-    
+    uint256 balanceBussines;
 
     // Declaramos un struct Score
     // Este struct tiene el id del torneo al que pertence y la puntuación propiamente dicha
@@ -69,6 +69,12 @@ contract TJoyTournaments is Ownable {
     constructor() {
         contractAddress = address(this);
         contractOwner = msg.sender;
+    }
+
+    // retiro de fees
+    function withdraw(uint256 _amount) public payable onlyOwner {
+        balanceBussines = balanceBussines - _amount;
+        this.send(_amount, contractOwner);
     }
 
     // Con esta función injectamos trx al contrato
@@ -143,7 +149,7 @@ contract TJoyTournaments is Ownable {
 
     // Esta función permite a un usuario registrarse en un torneo
     // Los requerimientos son que posea, al menos, un nft de TJoyArcade y que no se encuentre ya registrado en ese mismo torneo
-    function registerPlayer(uint256 _tournamentId, address _address)
+    function registerPlayer(uint256 _tournamentId)
         public
         payable
     {
@@ -155,8 +161,10 @@ contract TJoyTournaments is Ownable {
             block.timestamp <= tournaments[_tournamentId].finishDate,
             "This tournament has already finished"
         );
-
-        emit Register(toroiu, asdjao)
+        uint256 _fee = msg.value * tournaments[_tournamentId].fee / 100;
+        balanceBussines = _fee;
+        tournaments[_tournamentId].payPool = tournaments[_tournamentId].payPool + _fee;
+        emit Register(_tournamentId, msg.sender)
     }
 
 
