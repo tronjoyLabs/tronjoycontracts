@@ -21,12 +21,15 @@ contract TJoyTournaments is Ownable {
         uint256 id;
         string name;
         bool paused;
+        uint256 fee;
         uint256 initPool;
         uint256 payPool;
         uint256 beginingDate;
         uint256 finishDate;
         uint256 numberOfAwards;
     }
+
+    
 
     // Declaramos un struct Score
     // Este struct tiene el id del torneo al que pertence y la puntuación propiamente dicha
