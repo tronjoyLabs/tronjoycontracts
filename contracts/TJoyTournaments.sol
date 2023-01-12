@@ -27,6 +27,7 @@ contract TJoyTournaments is Ownable {
         uint256 beginingDate;
         uint256 finishDate;
         uint256 numberOfAwards;
+        bool isClaimable;
     }
 
     uint256 balanceBussines;
@@ -46,6 +47,8 @@ contract TJoyTournaments is Ownable {
 
     struct Award {
         uint256 amount;
+        ITRC721 nft;
+        uint256 nftId;
         bool claimed;
     }
 
@@ -226,8 +229,16 @@ contract TJoyTournaments is Ownable {
         return tournamentsBests[_tournamentId];
     }
 
+    function registerRewards(uint256 _tournamentId, _tournamentsBests) onlyOwner {
+        // registramos los premios 
+        tournamentsBests[_tournamentId] = _tournamentsBests;
+        tournaments[_tournamentId].isClaimable = true;
+    }
+
     // Función para reclamar recompensas
     function claimRewards(uint256 _tournamentId) public payable {
+
+        require(tournaments[_tournamentId].isClaimable)
         require(
             block.timestamp >= tournaments[_tournamentId].finishDate,
             "This tournament has not finished yet"
