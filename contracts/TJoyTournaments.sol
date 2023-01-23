@@ -44,10 +44,10 @@ contract TJoyTournaments is Ownable {
     // }
 
     // Declaramos un struct que guarda mejores puntuaciones
-    // struct BestScore {
-    //     address addr;
-    //     uint256 score;
-    // }
+    /* struct BestScore {
+        address addr;
+        uint256 score;
+    } */
 
     // struct Award {
     //     uint256 amount;
@@ -55,6 +55,20 @@ contract TJoyTournaments is Ownable {
     //     uint256 nftId;
     //     bool claimed;
     // }
+
+    // Declaramos un struct que tiene cada premio de un torneo
+    struct TrxAward {
+        address player;
+        uint256 amount;
+    }
+
+    struct NftAward {
+        uint256 nftId;
+        IERC721 nft;
+    }
+
+    // En esta mapeo están los premios de cada torneo
+    mapping(uint256 => TrxAward[]) trxAwardsDistribution;
 
     // Este mapeo continene arrays con los premios asociados al id del torneo
     // mapping(uint256 => Award[]) tournamentsAwards;
@@ -71,7 +85,7 @@ contract TJoyTournaments is Ownable {
     // mapping(uint256 => BestScore[]) tournamentsBests;
 
     // Esta variable la vamos a emplear para asignar ids secuenciales a los torneos
-    uint256 nextTournamentId = 0;
+    uint256 public nextTournamentId = 0;
 
     // Declaramos nuestro constructor
     constructor() {
@@ -102,6 +116,14 @@ contract TJoyTournaments is Ownable {
         return tournaments[_id];
     }
 
+    function getTrxTournamentAwards(uint256 _id)
+        public
+        view
+        returns (TrxAward[] memory)
+    {
+        return trxAwardsDistribution[_id];
+    }
+
     // retiro de fees
     // function withdraw(uint256 _amount) public payable onlyOwner {
     //     businessBalance = businessBalance - _amount;
@@ -127,7 +149,10 @@ contract TJoyTournaments is Ownable {
         uint256 _finishDate,
         IERC721 _nft
     ) public payable onlyOwner {
-        require(_initPoolAmount == msg.value);
+        require(
+            _initPoolAmount == msg.value,
+            "_initPoolAmount does not match with msg.value"
+        );
 
         Tournament memory newTournament = Tournament({
             id: nextTournamentId,
@@ -181,6 +206,19 @@ contract TJoyTournaments is Ownable {
         tournaments[_tournamentId].payPool += msg.value - fee;
 
         emit Register(_tournamentId, msg.sender);
+    }
+
+    function addTrxAward(
+        uint256 _tournamentId,
+        address _player,
+        uint256 _amount
+    ) public payable {
+        TrxAward memory newTrxAward = TrxAward({
+            player: _player,
+            amount: _amount
+        });
+
+        trxAwardsDistribution[_tournamentId].push(newTrxAward);
     }
 
     // La siguiente función devuelve las puntuaciones de todos los torneos en los que ha participado un jugador

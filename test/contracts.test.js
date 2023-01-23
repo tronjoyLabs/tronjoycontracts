@@ -114,7 +114,7 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(totalMinted === 4);
   });
 
-  it("Create a first tournament", async () => {
+  it("Create a first payable tournament", async () => {
     const beginingDate = parseInt(Date.now() / 1000);
     const finishDate = beginingDate + 130;
     await tJoyTournaments.createTournament(
@@ -157,6 +157,75 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(businessBalance.toNumber() === 103);
     assert.isTrue(contractBalance.toNumber() === 110);
     assert.isTrue(true === true);
+  });
+
+  it("Create a first non payable tournament in a wrong way", async () => {
+    const beginingDate = parseInt(Date.now() / 1000);
+    const finishDate = beginingDate + 130;
+    await sleep(5000);
+    await tJoyTournaments.createTournament(
+      0,
+      0,
+      100,
+      beginingDate,
+      finishDate,
+      TJoyArcade.address,
+      {
+        callValue: 1000,
+      }
+    );
+    await sleep(5000);
+
+    const tournament = await tJoyTournaments.getTournament(1);
+
+    assert.isTrue(tournament.id.toNumber() === 0);
+  });
+
+  it("Create a first non payable tournament", async () => {
+    const beginingDate = parseInt(Date.now() / 1000);
+    const finishDate = beginingDate + 130;
+    await sleep(5000);
+    await tJoyTournaments.createTournament(
+      0,
+      0,
+      1000,
+      beginingDate,
+      finishDate,
+      TJoyArcade.address,
+      {
+        callValue: 1000,
+      }
+    );
+    await sleep(5000);
+
+    const tournament = await tJoyTournaments.getTournament(1);
+    const contractBalance = await tJoyTournaments.getContractBalance();
+    const businessBalance = await tJoyTournaments.getBusinessBalance();
+
+    assert.isTrue(tournament.id.toNumber() === 1);
+    assert.isTrue(tournament.paused === false);
+    assert.isTrue(tournament.price.toNumber() === 0);
+    assert.isTrue(tournament.fee.toNumber() === 0);
+    assert.isTrue(tournament.initPool.toNumber() === 1000);
+    assert.isTrue(tournament.payPool.toNumber() === 0);
+    assert.isTrue(tournament.beginingDate.toNumber() === beginingDate);
+    assert.isTrue(tournament.finishDate.toNumber() === finishDate);
+    assert.isTrue(contractBalance.toNumber() === 1110);
+    assert.isTrue(businessBalance.toNumber() === 1103);
+  });
+
+  it("Set first award in first payable tournament", async () => {
+    await sleep(5000);
+    await tJoyTournaments.addTrxAward(0, testAddress, 20);
+    await sleep(5000);
+
+    const tournamentAwards = await tJoyTournaments.getTrxTournamentAwards(0);
+
+    assert.isTrue(tournamentAwards.length === 1);
+    assert.isTrue(
+      tournamentAwards[0].player === tronWeb.address.toHex(testAddress)
+    );
+    assert.isTrue(tournamentAwards[0].amount.toNumber() === 20);
   });
 
   // it("Register player in 'test' tournament", async () => {
