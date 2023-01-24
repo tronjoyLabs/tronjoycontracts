@@ -6,8 +6,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 contract TJoyTournaments is Ownable {
-    address public contractAddress;
-
     struct Tournament {
         uint256 id;
         bool paused;
@@ -22,7 +20,11 @@ contract TJoyTournaments is Ownable {
         bool isReclaimable;
     }
 
-    uint256 businessBalance;
+    address public contractAddress;
+
+    uint256 public businessBalance;
+
+    uint256 public nextTournamentId = 1000000000;
 
     struct Award {
         uint256 amount;
@@ -34,8 +36,6 @@ contract TJoyTournaments is Ownable {
     mapping(uint256 => mapping(address => Award)) awards;
 
     mapping(uint256 => Tournament) tournaments;
-
-    uint256 public nextTournamentId = 1000000000;
 
     constructor() {
         contractAddress = address(this);
