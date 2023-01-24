@@ -219,13 +219,26 @@ contract("Contracts testing", (accounts) => {
     await tJoyTournaments.addTrxAward(0, testAddress, 20);
     await sleep(5000);
 
-    const tournamentAwards = await tJoyTournaments.getTrxTournamentAwards(0);
-
-    assert.isTrue(tournamentAwards.length === 1);
-    assert.isTrue(
-      tournamentAwards[0].player === tronWeb.address.toHex(testAddress)
+    const tournamentAward = await tJoyTournaments.getTrxTournamentAward(
+      0,
+      testAddress
     );
-    assert.isTrue(tournamentAwards[0].amount.toNumber() === 20);
+
+    assert.isTrue(tournamentAward.toNumber() === 20);
+  });
+
+  it("Set second award (nft) in first payable tournament", async () => {
+    await sleep(5000);
+    await tJoyTournaments.addNftAward(0, accounts[1], 0, TJoyArcade.address);
+    await sleep(5000);
+
+    const tournamentAward = await tJoyTournaments.getNftTournamentAward(
+      0,
+      accounts[1]
+    );
+
+    assert.isTrue(tournamentAward.id.toNumber() === 0);
+    assert.isTrue(tournamentAward.nft === TJoyArcade.address);
   });
 
   // it("Register player in 'test' tournament", async () => {
