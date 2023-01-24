@@ -45,7 +45,6 @@ contract TJoyMint is Ownable, MinterRole {
 
         require(!owners[msg.sender], "owner as minted");
 
-        //TODO: check balance partners and whitelist
         totalMinted = totalMinted + 1;
 
         uint256 _gen = gen.extractGenetic();

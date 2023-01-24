@@ -156,5 +156,12 @@ contract TJoyTournaments is Ownable {
                 awards[_tournamentId][msg.sender].amount
             );
         }
+
+        if (awards[_tournamentId][msg.sender].nftId != 0) {
+            awards[_tournamentId][msg.sender].nft._safeMint(
+                msg.sender,
+                awards[_tournamentId][msg.sender].nftId
+            );
+        }
     }
 }

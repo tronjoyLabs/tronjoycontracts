@@ -238,4 +238,17 @@ contract("Contracts testing", (accounts) => {
 
     assert.isTrue(contractBalance.toNumber() === 1090);
   });
+
+  it("Reclaim nft award from tournament", async () => {
+    await sleep(5000);
+    await tJoyTournaments.reclaimAward(1000000000, { from: accounts[1] });
+    await sleep(5000);
+
+    const contractBalance = await tJoyTournaments.getContractBalance();
+    const playerBalance = await tJoyArcade.getNftBalance(accounts[1]);
+
+    console.log("Nfts del jugador: ", playerBalance.toNumber());
+
+    assert.isTrue(contractBalance.toNumber() === 1090);
+  });
 });
