@@ -36,19 +36,7 @@ contract("Contracts testing", (accounts) => {
     await tJoyMint.changeGen(TJoyGenetics.address);
     await tJoyArcade.addMinter(tJoyMint.address);
     await tJoyGenetics.addMinter(tJoyMint.address);
-    // await tJoyTournaments.setNfts(TJoyArcade.address);
-
-    // await tJoyTournaments.injectFunds(1000, {
-    //   callValue: 1000,
-    //   from: tronWeb.address.fromHex(testAddress),
-    // });
   });
-
-  /* it("Get tournaments contract balance", async () => {
-    const tournamentsBalance = await tJoyTournaments.getContractBalance();
-
-    assert.isTrue(tournamentsBalance.toNumber() === 1000);
-  }); */
 
   it("Add genetics to contract", async () => {
     let genetics = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -188,6 +176,7 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(tournament.fee.toNumber() === 0);
     assert.isTrue(tournament.initPool.toNumber() === 1000);
     assert.isTrue(tournament.payPool.toNumber() === 0);
+    assert.isTrue(tournament.distributed.toNumber() === 0);
     assert.isTrue(tournament.beginingDate.toNumber() === beginingDate);
     assert.isTrue(tournament.finishDate.toNumber() === finishDate);
     assert.isTrue(contractBalance.toNumber() === 1110);
@@ -240,167 +229,13 @@ contract("Contracts testing", (accounts) => {
     );
   });
 
-  // it("Register player in 'test' tournament", async () => {
-  //   await sleep(5000);
-  //   await tJoyTournaments.registerPlayer(0, testAddress);
-  //   await sleep(5000);
-  //   const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
-  //   const tournament = await tJoyTournaments.getTournament(0);
-  //   assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
-  //   assert.isTrue(playerScores[0].score.toNumber() === 0);
-  //   assert.isTrue(tournament.players[0] === tronWeb.address.toHex(testAddress));
-  // });
+  it("Reclaim award from tournament", async () => {
+    await sleep(5000);
+    await tJoyTournaments.reclaimAward(1000000000);
+    await sleep(5000);
 
-  // it("Update player score in 'test' tournament", async () => {
-  //   await sleep(5000);
-  //   await tJoyTournaments.updatePlayerScore(0, 3);
-  //   await sleep(5000);
-  //   const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
-  //   const topScores = await tJoyTournaments.getTopPlayers(0);
+    const contractBalance = await tJoyTournaments.getContractBalance();
 
-  //   assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
-  //   assert.isTrue(playerScores[0].score.toNumber() === 3);
-  //   assert.isTrue(topScores.length === 1);
-  //   assert.isTrue(topScores[0].score.toNumber() === 3);
-  // });
-
-  // it("Register player in 'test' tournament for a second time", async () => {
-  //   await sleep(5000);
-  //   await tJoyTournaments.registerPlayer(0, testAddress);
-  //   await sleep(5000);
-  //   const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
-  //   const score = await tJoyTournaments.getPlayerScore(0, testAddress);
-
-  //   assert.isTrue(playerScores.length === 1);
-  //   assert.isTrue(score.toNumber() === 3);
-  // });
-
-  // it("Update player score in 'test' tournament without improvement", async () => {
-  //   await sleep(5000);
-  //   await tJoyTournaments.updatePlayerScore(0, 2);
-  //   await sleep(5000);
-  //   const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
-
-  //   assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
-  //   assert.isTrue(playerScores[0].score.toNumber() === 3);
-  // });
-
-  // it("Update player score in 'test' tournament with improvement", async () => {
-  //   await sleep(5000);
-  //   await tJoyTournaments.updatePlayerScore(0, 5);
-  //   await sleep(5000);
-  //   const playerScores = await tJoyTournaments.getPlayerScores(testAddress);
-
-  //   assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
-  //   assert.isTrue(playerScores[0].score.toNumber() === 5);
-  // });
-
-  // it("Register a second player in 'test' tournament", async () => {
-  //   await sleep(5000);
-  //   await tJoyTournaments.registerPlayer(0, accounts[1]);
-  //   await sleep(5000);
-  //   const playerScores = await tJoyTournaments.getPlayerScores(accounts[1]);
-  //   const tournament = await tJoyTournaments.getTournament(0);
-
-  //   assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
-  //   assert.isTrue(playerScores[0].score.toNumber() === 0);
-  //   assert.isTrue(tournament.players[1] === tronWeb.address.toHex(accounts[1]));
-  // });
-
-  // it("Update second player score in 'test' tournament", async () => {
-  //   await sleep(5000);
-  //   await tJoyTournaments.updatePlayerScore(0, 4, { from: accounts[1] });
-  //   await sleep(5000);
-  //   const playerScores = await tJoyTournaments.getPlayerScores(accounts[1]);
-  //   const topScores = await tJoyTournaments.getTopPlayers(0);
-
-  //   assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
-  //   assert.isTrue(playerScores[0].score.toNumber() === 4);
-  //   assert.isTrue(topScores.length === 2);
-  //   assert.isTrue(topScores[0].score.toNumber() === 5);
-  // });
-
-  // it("Update second player score in 'test' tournament with a lower score", async () => {
-  //   await sleep(5000);
-  //   await tJoyTournaments.updatePlayerScore(0, 1, { from: accounts[1] });
-  //   await sleep(5000);
-  //   const playerScores = await tJoyTournaments.getPlayerScores(accounts[1]);
-  //   const topScores = await tJoyTournaments.getTopPlayers(0);
-
-  //   assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
-  //   assert.isTrue(playerScores[0].score.toNumber() === 4);
-  //   assert.isTrue(topScores.length === 2);
-  //   assert.isTrue(topScores[0].score.toNumber() === 5);
-  // });
-
-  // it("Update second player score in 'test' tournament reaching the first position", async () => {
-  //   await sleep(5000);
-  //   await tJoyTournaments.updatePlayerScore(0, 7, { from: accounts[1] });
-  //   await sleep(5000);
-  //   const playerScores = await tJoyTournaments.getPlayerScores(accounts[1]);
-  //   const topScores = await tJoyTournaments.getTopPlayers(0);
-
-  //   assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
-  //   assert.isTrue(playerScores[0].score.toNumber() === 7);
-  //   assert.isTrue(topScores.length === 2);
-  //   assert.isTrue(topScores[0].score.toNumber() === 7);
-  // });
-
-  // it("Register a third player in 'test' tournament", async () => {
-  //   await sleep(5000);
-  //   await tJoyTournaments.registerPlayer(0, accounts[2]);
-  //   await sleep(5000);
-  //   const playerScores = await tJoyTournaments.getPlayerScores(accounts[2]);
-  //   const tournament = await tJoyTournaments.getTournament(0);
-
-  //   assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
-  //   assert.isTrue(playerScores[0].score.toNumber() === 0);
-  //   assert.isTrue(tournament.players[2] === tronWeb.address.toHex(accounts[2]));
-  // });
-
-  // it("Update third player score in 'test' tournament", async () => {
-  //   await sleep(5000);
-  //   await tJoyTournaments.updatePlayerScore(0, 6, { from: accounts[2] });
-  //   await sleep(5000);
-  //   const playerScores = await tJoyTournaments.getPlayerScores(accounts[2]);
-  //   const topScores = await tJoyTournaments.getTopPlayers(0);
-
-  //   assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
-  //   assert.isTrue(playerScores[0].score.toNumber() === 6);
-  //   assert.isTrue(topScores.length === 3);
-  //   assert.isTrue(topScores[1].score.toNumber() === 6);
-  // });
-
-  // it("Register a fourth player in 'test' tournament", async () => {
-  //   await sleep(5000);
-  //   await tJoyTournaments.registerPlayer(0, accounts[3]);
-  //   await sleep(5000);
-  //   const playerScores = await tJoyTournaments.getPlayerScores(accounts[3]);
-  //   const tournament = await tJoyTournaments.getTournament(0);
-
-  //   assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
-  //   assert.isTrue(playerScores[0].score.toNumber() === 0);
-  //   assert.isTrue(tournament.players[3] === tronWeb.address.toHex(accounts[3]));
-  // });
-
-  // it("Fourth player enters the top", async () => {
-  //   await sleep(5000);
-  //   await tJoyTournaments.updatePlayerScore(0, 15, { from: accounts[3] });
-  //   await sleep(5000);
-  //   const playerScores = await tJoyTournaments.getPlayerScores(accounts[3]);
-  //   const topScores = await tJoyTournaments.getTopPlayers(0);
-
-  //   assert.isTrue(playerScores[0].tournamentId.toNumber() === 0);
-  //   assert.isTrue(playerScores[0].score.toNumber() === 15);
-  //   assert.isTrue(topScores.length === 3);
-  // });
-
-  // it("Claim first reward", async () => {
-  //   await sleep(20000);
-  //   await tJoyTournaments.claimRewards(0, { from: accounts[3] });
-  //   await sleep(5000);
-  //   const contractBalance = await tJoyTournaments.getContractBalance();
-
-  //   assert.isTrue(contractBalance.toNumber() === 900);
-  // });
+    assert.isTrue(contractBalance.toNumber() === 1090);
+  });
 });
