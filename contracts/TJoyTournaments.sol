@@ -68,16 +68,21 @@ contract TJoyTournaments is Ownable {
     //     IERC721 nft;
     // }
 
-    struct NftAward {
-        uint256 id;
+    struct Award {
+        uint256 amount;
+        uint256 nftId;
         IERC721 nft;
     }
 
+    mapping(uint256 => mapping(address => Award)) awards;
+
     // En esta mapeo están los premios de cada torneo
     // mapping(uint256 => TrxAward[]) trxAwardsDistribution;
-    mapping(uint256 => mapping(address => uint256)) trxAwardsDistribution;
+    // mapping(uint256 => mapping(address => uint256)) trxAwardsDistribution;
 
-    mapping(uint256 => mapping(address => NftAward)) nftAwardsDistribution;
+    // mapping(uint256 => mapping(address => NftAward)) nftAwardsDistribution;
+
+    // mapping(uint256 => mapping(address => bool)) awardedPlayers;
 
     // Este mapeo continene arrays con los premios asociados al id del torneo
     // mapping(uint256 => Award[]) tournamentsAwards;
@@ -94,7 +99,7 @@ contract TJoyTournaments is Ownable {
     // mapping(uint256 => BestScore[]) tournamentsBests;
 
     // Esta variable la vamos a emplear para asignar ids secuenciales a los torneos
-    uint256 public nextTournamentId = 0;
+    uint256 public nextTournamentId = 1000000000;
 
     // Declaramos nuestro constructor
     constructor() {
@@ -125,20 +130,12 @@ contract TJoyTournaments is Ownable {
         return tournaments[_id];
     }
 
-    function getTrxTournamentAward(uint256 _id, address _player)
+    function getTournamentAward(uint256 _id, address _player)
         public
         view
-        returns (uint256)
+        returns (Award memory)
     {
-        return trxAwardsDistribution[_id][_player];
-    }
-
-    function getNftTournamentAward(uint256 _id, address _player)
-        public
-        view
-        returns (NftAward memory)
-    {
-        return nftAwardsDistribution[_id][_player];
+        return awards[_id][_player];
     }
 
     // retiro de fees
@@ -225,23 +222,20 @@ contract TJoyTournaments is Ownable {
         emit Register(_tournamentId, msg.sender);
     }
 
-    function addTrxAward(
+    function addAward(
         uint256 _tournamentId,
         address _player,
-        uint256 _amount
-    ) public payable {
-        trxAwardsDistribution[_tournamentId][_player] = _amount;
-    }
-
-    function addNftAward(
-        uint256 _tournamentId,
-        address _player,
-        uint256 _tokenId,
+        uint256 _amount,
+        uint256 _nftId,
         IERC721 _nft
     ) public payable {
-        NftAward memory newNftAward = NftAward({id: _tokenId, nft: _nft});
+        Award memory newAward = Award({
+            amount: _amount,
+            nftId: _nftId,
+            nft: _nft
+        });
 
-        nftAwardsDistribution[_tournamentId][_player] = newNftAward;
+        awards[_tournamentId][_player] = newAward;
     }
 
     // La siguiente función devuelve las puntuaciones de todos los torneos en los que ha participado un jugador

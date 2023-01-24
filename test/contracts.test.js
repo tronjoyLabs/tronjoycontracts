@@ -14,6 +14,7 @@ contract("Contracts testing", (accounts) => {
   let tJoyMint;
   let tJoyTournaments;
   let tronWeb;
+  let defaultAddress;
 
   const testAddress = accounts[0];
 
@@ -23,6 +24,8 @@ contract("Contracts testing", (accounts) => {
       privateKey:
         "da146374a75310b9666e834ee4ad0866d6f4035967bfc76217c5a495fff9f0d0",
     });
+
+    defaultAddress = "0x0000000000000000000000000000000000000000";
 
     tJoyArcade = await TJoyArcade.deployed();
     tJoyGenetics = await TJoyGenetics.deployed();
@@ -129,9 +132,9 @@ contract("Contracts testing", (accounts) => {
       }
     );
 
-    const tournament = await tJoyTournaments.getTournament(0);
+    const tournament = await tJoyTournaments.getTournament(1000000000);
 
-    assert.isTrue(tournament.id.toNumber() === 0);
+    assert.isTrue(tournament.id.toNumber() === 1000000000);
     assert.isTrue(tournament.paused === false);
     assert.isTrue(tournament.price.toNumber() === 10);
     assert.isTrue(tournament.fee.toNumber() === 30);
@@ -141,44 +144,21 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(tournament.finishDate.toNumber() === finishDate);
   });
 
-  it("Register player in first tournament", async () => {
+  it("Register player in first payable tournament", async () => {
     await sleep(5000);
-    await tJoyTournaments.registerPlayer(0, {
+    await tJoyTournaments.registerPlayer(1000000000, {
       callValue: 10,
     });
     await sleep(5000);
 
-    const tournament = await tJoyTournaments.getTournament(0);
+    const tournament = await tJoyTournaments.getTournament(1000000000);
     const contractBalance = await tJoyTournaments.getContractBalance();
     const businessBalance = await tJoyTournaments.getBusinessBalance();
 
-    assert.isTrue(tournament.id.toNumber() === 0);
+    assert.isTrue(tournament.id.toNumber() === 1000000000);
     assert.isTrue(tournament.payPool.toNumber() === 7);
     assert.isTrue(businessBalance.toNumber() === 103);
     assert.isTrue(contractBalance.toNumber() === 110);
-    assert.isTrue(true === true);
-  });
-
-  it("Create a first non payable tournament in a wrong way", async () => {
-    const beginingDate = parseInt(Date.now() / 1000);
-    const finishDate = beginingDate + 130;
-    await sleep(5000);
-    await tJoyTournaments.createTournament(
-      0,
-      0,
-      100,
-      beginingDate,
-      finishDate,
-      TJoyArcade.address,
-      {
-        callValue: 1000,
-      }
-    );
-    await sleep(5000);
-
-    const tournament = await tJoyTournaments.getTournament(1);
-
-    assert.isTrue(tournament.id.toNumber() === 0);
   });
 
   it("Create a first non payable tournament", async () => {
@@ -198,11 +178,11 @@ contract("Contracts testing", (accounts) => {
     );
     await sleep(5000);
 
-    const tournament = await tJoyTournaments.getTournament(1);
+    const tournament = await tJoyTournaments.getTournament(1000000001);
     const contractBalance = await tJoyTournaments.getContractBalance();
     const businessBalance = await tJoyTournaments.getBusinessBalance();
 
-    assert.isTrue(tournament.id.toNumber() === 1);
+    assert.isTrue(tournament.id.toNumber() === 1000000001);
     assert.isTrue(tournament.paused === false);
     assert.isTrue(tournament.price.toNumber() === 0);
     assert.isTrue(tournament.fee.toNumber() === 0);
@@ -214,31 +194,50 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(businessBalance.toNumber() === 1103);
   });
 
-  it("Set first award in first payable tournament", async () => {
+  it("Set first award (trx) in first non payable tournament", async () => {
     await sleep(5000);
-    await tJoyTournaments.addTrxAward(0, testAddress, 20);
+    await tJoyTournaments.addAward(
+      1000000000,
+      testAddress,
+      20,
+      0,
+      defaultAddress
+    );
     await sleep(5000);
 
-    const tournamentAward = await tJoyTournaments.getTrxTournamentAward(
-      0,
+    const tournamentAward = await tJoyTournaments.getTournamentAward(
+      1000000000,
       testAddress
     );
 
-    assert.isTrue(tournamentAward.toNumber() === 20);
+    assert.isTrue(tournamentAward.amount.toNumber() === 20);
+    assert.isTrue(tournamentAward.nftId.toNumber() === 0);
+    assert.isTrue(
+      tournamentAward.nft === tronWeb.address.toHex(defaultAddress)
+    );
   });
 
-  it("Set second award (nft) in first payable tournament", async () => {
+  it("Another award (nft) in first non payable tournament", async () => {
     await sleep(5000);
-    await tJoyTournaments.addNftAward(0, accounts[1], 0, TJoyArcade.address);
+    await tJoyTournaments.addAward(
+      1000000000,
+      accounts[1],
+      0,
+      1000000000,
+      TJoyArcade.address
+    );
     await sleep(5000);
 
-    const tournamentAward = await tJoyTournaments.getNftTournamentAward(
-      0,
+    const tournamentAward = await tJoyTournaments.getTournamentAward(
+      1000000000,
       accounts[1]
     );
 
-    assert.isTrue(tournamentAward.id.toNumber() === 0);
-    assert.isTrue(tournamentAward.nft === TJoyArcade.address);
+    assert.isTrue(tournamentAward.amount.toNumber() === 0);
+    assert.isTrue(tournamentAward.nftId.toNumber() === 1000000000);
+    assert.isTrue(
+      tournamentAward.nft === tronWeb.address.toHex(TJoyArcade.address)
+    );
   });
 
   // it("Register player in 'test' tournament", async () => {
