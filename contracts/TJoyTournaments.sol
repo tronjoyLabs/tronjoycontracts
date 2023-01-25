@@ -141,6 +141,11 @@ contract TJoyTournaments is Ownable {
 
     function reclaimAward(uint256 _tournamentId) public payable {
         require(
+            block.timestamp >= tournaments[_tournamentId].finishDate,
+            "This tournament has already finished"
+        );
+
+        require(
             awards[_tournamentId][msg.sender].received == false,
             "This award has been already taken"
         );
@@ -158,6 +163,8 @@ contract TJoyTournaments is Ownable {
         }
 
         if (awards[_tournamentId][msg.sender].nftId != 0) {
+            awards[_tournamentId][msg.sender].received == true;
+
             awards[_tournamentId][msg.sender].nft._safeMint(
                 msg.sender,
                 awards[_tournamentId][msg.sender].nftId

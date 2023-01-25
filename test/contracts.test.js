@@ -107,7 +107,7 @@ contract("Contracts testing", (accounts) => {
 
   it("Create a first payable tournament", async () => {
     const beginingDate = parseInt(Date.now() / 1000);
-    const finishDate = beginingDate + 130;
+    const finishDate = beginingDate + 30;
     await tJoyTournaments.createTournament(
       10,
       30,
@@ -206,7 +206,7 @@ contract("Contracts testing", (accounts) => {
     );
   });
 
-  it("Another award (nft) in first non payable tournament", async () => {
+  it("Set another award (nft) in first non payable tournament", async () => {
     await sleep(5000);
     await tJoyTournaments.addAward(
       1000000000,
@@ -234,9 +234,11 @@ contract("Contracts testing", (accounts) => {
     await tJoyTournaments.reclaimAward(1000000000);
     await sleep(5000);
 
+    const tournament = await tJoyTournaments.getTournament(1000000000);
     const contractBalance = await tJoyTournaments.getContractBalance();
 
     assert.isTrue(contractBalance.toNumber() === 1090);
+    assert.isTrue(tournament.distributed.toNumber() === 20);
   });
 
   it("Reclaim nft award from tournament", async () => {
