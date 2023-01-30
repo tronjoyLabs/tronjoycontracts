@@ -10,6 +10,7 @@ contract TJoyGenetics is Ownable, MinterRole {
     uint256[] private used;
     using SafeMath for uint256;
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    uint256 public lastMintedToken;
 
     constructor() {}
 
@@ -53,6 +54,8 @@ contract TJoyGenetics is Ownable, MinterRole {
         available.pop();
 
         used.push(genetica);
+
+        lastMintedToken = genetica;
 
         return genetica;
     }

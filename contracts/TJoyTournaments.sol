@@ -20,6 +20,8 @@ contract TJoyTournaments is Ownable {
         bool isReclaimable;
     }
 
+    address public contractOwner;
+
     address public contractAddress;
 
     uint256 public businessBalance;
@@ -39,6 +41,8 @@ contract TJoyTournaments is Ownable {
 
     constructor() {
         contractAddress = address(this);
+
+        contractOwner = msg.sender;
     }
 
     event Register(uint256 tournamentId, address playerAddress);
@@ -165,7 +169,8 @@ contract TJoyTournaments is Ownable {
         if (awards[_tournamentId][msg.sender].nftId != 0) {
             awards[_tournamentId][msg.sender].received == true;
 
-            awards[_tournamentId][msg.sender].nft._safeMint(
+            awards[_tournamentId][msg.sender].nft.safeTransferFrom(
+                contractOwner,
                 msg.sender,
                 awards[_tournamentId][msg.sender].nftId
             );

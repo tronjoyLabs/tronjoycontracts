@@ -15,6 +15,7 @@ contract("Contracts testing", (accounts) => {
   let tJoyTournaments;
   let tronWeb;
   let defaultAddress;
+  let awardTokenId;
 
   const testAddress = accounts[0];
 
@@ -39,7 +40,10 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Add genetics to contract", async () => {
-    let genetics = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let genetics = [
+      1000000001, 1000000002, 1000000003, 1000000004, 1000000005, 1000000006,
+      1000000007, 1000000008, 1000000009, 1000000010,
+    ];
     await tJoyGenetics.addGenetics(genetics);
     const available = await tJoyGenetics.getAvailable();
     const used = await tJoyGenetics.getUsed();
@@ -49,7 +53,7 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Mint an nft for an address", async () => {
-    await tJoyMint.mint();
+    await tJoyMint.mint({ from: accounts[1] });
     const available = await tJoyGenetics.getAvailable();
     const used = await tJoyGenetics.getUsed();
     const totalMinted = (await tJoyMint.getTotalOwners()).toNumber();
@@ -60,7 +64,7 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Mint an nft for a second address", async () => {
-    await tJoyMint.mint({ from: accounts[1] });
+    await tJoyMint.mint({ from: accounts[2] });
     const available = await tJoyGenetics.getAvailable();
     const used = await tJoyGenetics.getUsed();
     const totalMinted = (await tJoyMint.getTotalOwners()).toNumber();
@@ -71,7 +75,7 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Mint an nft for a third address", async () => {
-    await tJoyMint.mint({ from: accounts[2] });
+    await tJoyMint.mint({ from: accounts[3] });
     const available = await tJoyGenetics.getAvailable();
     const used = await tJoyGenetics.getUsed();
     const totalMinted = (await tJoyMint.getTotalOwners()).toNumber();
@@ -82,7 +86,7 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Mint an nft for a fourth address", async () => {
-    await tJoyMint.mint({ from: accounts[3] });
+    await tJoyMint.mint({ from: accounts[4] });
     const available = await tJoyGenetics.getAvailable();
     const used = await tJoyGenetics.getUsed();
     const totalMinted = (await tJoyMint.getTotalOwners()).toNumber();
@@ -92,17 +96,34 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(totalMinted === 4);
   });
 
+  it("Mint an nft for an award", async () => {
+    await tJoyMint.mint({
+      from: testAddress,
+    });
+
+    const available = await tJoyGenetics.getAvailable();
+    const used = await tJoyGenetics.getUsed();
+    const totalMinted = (await tJoyMint.getTotalOwners()).toNumber();
+    const playerBalance = await tJoyArcade.getNftBalance(testAddress);
+    awardTokenId = (await tJoyGenetics.lastMintedToken()).toNumber();
+
+    assert.isTrue(available.length === 5);
+    assert.isTrue(used.length === 5);
+    assert.isTrue(totalMinted === 5);
+    assert.isTrue(playerBalance.toNumber() === 1);
+  });
+
   it("Get nft banlance for the address which minted the previous token", async () => {
-    const balance = await tJoyArcade.getNftBalance(testAddress);
+    const balance = await tJoyArcade.getNftBalance(accounts[1]);
 
     assert.isTrue(balance.toNumber() === 1);
   });
 
-  it("Try to mint a second nft for our testing msg.sender default address", async () => {
-    await tJoyMint.mint();
+  it("Try to mint a second nft for an address address", async () => {
+    await tJoyMint.mint({ from: accounts[1] });
     const totalMinted = (await tJoyMint.getTotalOwners()).toNumber();
 
-    assert.isTrue(totalMinted === 4);
+    assert.isTrue(totalMinted === 5);
   });
 
   it("Create a first payable tournament", async () => {
@@ -135,6 +156,7 @@ contract("Contracts testing", (accounts) => {
   it("Register player in first payable tournament", async () => {
     await sleep(5000);
     await tJoyTournaments.registerPlayer(1000000000, {
+      from: accounts[1],
       callValue: 10,
     });
     await sleep(5000);
@@ -187,7 +209,7 @@ contract("Contracts testing", (accounts) => {
     await sleep(5000);
     await tJoyTournaments.addAward(
       1000000000,
-      testAddress,
+      accounts[1],
       20,
       0,
       defaultAddress
@@ -196,7 +218,7 @@ contract("Contracts testing", (accounts) => {
 
     const tournamentAward = await tJoyTournaments.getTournamentAward(
       1000000000,
-      testAddress
+      accounts[1]
     );
 
     assert.isTrue(tournamentAward.amount.toNumber() === 20);
@@ -210,20 +232,21 @@ contract("Contracts testing", (accounts) => {
     await sleep(5000);
     await tJoyTournaments.addAward(
       1000000000,
-      accounts[1],
+      accounts[2],
       0,
-      1000000000,
+      awardTokenId,
       TJoyArcade.address
     );
     await sleep(5000);
 
     const tournamentAward = await tJoyTournaments.getTournamentAward(
       1000000000,
-      accounts[1]
+      accounts[2]
     );
 
+    assert.isTrue(tournamentAward.received === false);
     assert.isTrue(tournamentAward.amount.toNumber() === 0);
-    assert.isTrue(tournamentAward.nftId.toNumber() === 1000000000);
+    assert.isTrue(tournamentAward.nftId.toNumber() === awardTokenId);
     assert.isTrue(
       tournamentAward.nft === tronWeb.address.toHex(TJoyArcade.address)
     );
@@ -231,7 +254,7 @@ contract("Contracts testing", (accounts) => {
 
   it("Reclaim award from tournament", async () => {
     await sleep(5000);
-    await tJoyTournaments.reclaimAward(1000000000);
+    await tJoyTournaments.reclaimAward(1000000000, { from: accounts[1] });
     await sleep(5000);
 
     const tournament = await tJoyTournaments.getTournament(1000000000);
@@ -243,12 +266,14 @@ contract("Contracts testing", (accounts) => {
 
   it("Reclaim nft award from tournament", async () => {
     await sleep(5000);
-    await tJoyTournaments.reclaimAward(1000000000, { from: accounts[1] });
+    await tJoyTournaments.reclaimAward(1000000000, { from: accounts[2] });
     await sleep(5000);
 
     const contractBalance = await tJoyTournaments.getContractBalance();
-    const playerBalance = await tJoyArcade.getNftBalance(accounts[1]);
+    const playerBalance = await tJoyArcade.getNftBalance(accounts[2]);
+    const ownerBalance = await tJoyArcade.getNftBalance(accounts[0]);
 
+    console.log("Nfts del owner: ", ownerBalance.toNumber());
     console.log("Nfts del jugador: ", playerBalance.toNumber());
 
     assert.isTrue(contractBalance.toNumber() === 1090);
