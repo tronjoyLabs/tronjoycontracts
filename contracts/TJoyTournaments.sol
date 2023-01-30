@@ -159,7 +159,7 @@ contract TJoyTournaments is Ownable {
                 msg.sender
             ].amount;
 
-            awards[_tournamentId][msg.sender].received == true;
+            awards[_tournamentId][msg.sender].received = true;
 
             payable(msg.sender).transfer(
                 awards[_tournamentId][msg.sender].amount
@@ -167,9 +167,9 @@ contract TJoyTournaments is Ownable {
         }
 
         if (awards[_tournamentId][msg.sender].nftId != 0) {
-            awards[_tournamentId][msg.sender].received == true;
+            awards[_tournamentId][msg.sender].received = true;
 
-            awards[_tournamentId][msg.sender].nft.safeTransferFrom(
+            awards[_tournamentId][msg.sender].nft.transferFrom(
                 contractOwner,
                 msg.sender,
                 awards[_tournamentId][msg.sender].nftId

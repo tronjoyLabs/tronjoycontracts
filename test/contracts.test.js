@@ -272,10 +272,15 @@ contract("Contracts testing", (accounts) => {
     const contractBalance = await tJoyTournaments.getContractBalance();
     const playerBalance = await tJoyArcade.getNftBalance(accounts[2]);
     const ownerBalance = await tJoyArcade.getNftBalance(accounts[0]);
+    const tournamentAward = await tJoyTournaments.getTournamentAward(
+      1000000000,
+      accounts[2]
+    );
 
     console.log("Nfts del owner: ", ownerBalance.toNumber());
     console.log("Nfts del jugador: ", playerBalance.toNumber());
 
     assert.isTrue(contractBalance.toNumber() === 1090);
+    assert.isTrue(tournamentAward.received === true);
   });
 });
