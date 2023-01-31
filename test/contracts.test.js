@@ -252,6 +252,22 @@ contract("Contracts testing", (accounts) => {
     );
   });
 
+  it("Transfer nft award from contract owner to contract", async () => {
+    await sleep(5000);
+    await tJoyArcade.transferFrom(
+      testAddress,
+      tronWeb.address.fromHex(TJoyTournaments.address),
+      awardTokenId
+    );
+    await sleep(5000);
+
+    const contractBalance = await tJoyArcade.getNftBalance(
+      TJoyTournaments.address
+    );
+
+    assert.isTrue(contractBalance.toNumber() === 1);
+  });
+
   it("Reclaim award from tournament", async () => {
     await sleep(5000);
     await tJoyTournaments.reclaimAward(1000000000, { from: accounts[1] });
@@ -270,15 +286,10 @@ contract("Contracts testing", (accounts) => {
     await sleep(5000);
 
     const contractBalance = await tJoyTournaments.getContractBalance();
-    const playerBalance = await tJoyArcade.getNftBalance(accounts[2]);
-    const ownerBalance = await tJoyArcade.getNftBalance(accounts[0]);
     const tournamentAward = await tJoyTournaments.getTournamentAward(
       1000000000,
       accounts[2]
     );
-
-    console.log("Nfts del owner: ", ownerBalance.toNumber());
-    console.log("Nfts del jugador: ", playerBalance.toNumber());
 
     assert.isTrue(contractBalance.toNumber() === 1090);
     assert.isTrue(tournamentAward.received === true);

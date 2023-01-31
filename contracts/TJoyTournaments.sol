@@ -170,7 +170,7 @@ contract TJoyTournaments is Ownable {
             awards[_tournamentId][msg.sender].received = true;
 
             awards[_tournamentId][msg.sender].nft.transferFrom(
-                contractOwner,
+                contractAddress,
                 msg.sender,
                 awards[_tournamentId][msg.sender].nftId
             );
