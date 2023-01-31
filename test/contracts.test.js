@@ -228,6 +228,21 @@ contract("Contracts testing", (accounts) => {
     );
   });
 
+  it("Approve owner's nft transactions from tournaments contract", async () => {
+    await sleep(5000);
+    await tJoyArcade.approve(
+      tronWeb.address.fromHex(TJoyTournaments.address),
+      awardTokenId
+    );
+    await sleep(5000);
+
+    const contractBalance = await tJoyArcade.getNftBalance(
+      TJoyTournaments.address
+    );
+
+    assert.isTrue(contractBalance.toNumber() === 0);
+  });
+
   it("Set another award (nft) in first non payable tournament", async () => {
     await sleep(5000);
     await tJoyTournaments.addAward(
@@ -250,22 +265,6 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(
       tournamentAward.nft === tronWeb.address.toHex(TJoyArcade.address)
     );
-  });
-
-  it("Transfer nft award from contract owner to contract", async () => {
-    await sleep(5000);
-    await tJoyArcade.transferFrom(
-      testAddress,
-      tronWeb.address.fromHex(TJoyTournaments.address),
-      awardTokenId
-    );
-    await sleep(5000);
-
-    const contractBalance = await tJoyArcade.getNftBalance(
-      TJoyTournaments.address
-    );
-
-    assert.isTrue(contractBalance.toNumber() === 1);
   });
 
   it("Reclaim award from tournament", async () => {

@@ -132,13 +132,17 @@ contract TJoyTournaments is Ownable {
         uint256 _amount,
         uint256 _nftId,
         IERC721 _nft
-    ) public payable {
+    ) public payable onlyOwner {
         Award memory newAward = Award({
             amount: _amount,
             nftId: _nftId,
             nft: _nft,
             received: false
         });
+
+        if (_nftId != 0) {
+            _nft.transferFrom(msg.sender, contractAddress, _nftId);
+        }
 
         awards[_tournamentId][_player] = newAward;
     }
