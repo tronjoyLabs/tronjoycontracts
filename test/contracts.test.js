@@ -21,7 +21,7 @@ contract("Contracts testing", (accounts) => {
 
   before(async function () {
     tronWeb = new TronWeb({
-      fullHost: "https://api.trongrid.io",
+      fullHost: "http://127.0.0.1:9090",
       privateKey:
         "da146374a75310b9666e834ee4ad0866d6f4035967bfc76217c5a495fff9f0d0",
     });
@@ -105,7 +105,17 @@ contract("Contracts testing", (accounts) => {
     const used = await tJoyGenetics.getUsed();
     const totalMinted = (await tJoyMint.getTotalOwners()).toNumber();
     const playerBalance = await tJoyArcade.getNftBalance(testAddress);
-    awardTokenId = (await tJoyGenetics.lastMintedToken()).toNumber();
+
+    awardTokenId = (
+      await tJoyArcade.tokenOfOwnerByIndex(testAddress, 0)
+    ).toNumber();
+
+    /* const awardTokenGen = (await tJoyGenetics.lastMintedToken()).toNumber();
+    console.log(awardTokenGen);
+    awardTokenId = (
+      await tJoyArcade.getTokenIdFromGen(awardTokenGen)
+    ).toNumber();*/
+    console.log(awardTokenId);
 
     assert.isTrue(available.length === 5);
     assert.isTrue(used.length === 5);
@@ -229,35 +239,44 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Approve owner's nft transactions from tournaments contract", async () => {
-    await sleep(5000);
-    await tJoyArcade.approve(
+    console.log(awardTokenId);
+    const tx = await tJoyArcade.approve(
       tronWeb.address.fromHex(TJoyTournaments.address),
-      awardTokenId
+      awardTokenId,
+      {
+        shouldPollResponse: true,
+      }
     );
-    await sleep(5000);
-
+    console.log("tx", tx);
     const contractBalance = await tJoyArcade.getNftBalance(
       TJoyTournaments.address
     );
-
+    console.log(contractBalance.toNumber());
     assert.isTrue(contractBalance.toNumber() === 0);
   });
 
   it("Set another award (nft) in first non payable tournament", async () => {
     await sleep(5000);
-    await tJoyTournaments.addAward(
+    const tx = await tJoyTournaments.addAward(
       1000000000,
       accounts[2],
       0,
       awardTokenId,
-      TJoyArcade.address
+      TJoyArcade.address,
+      {
+        shouldPollResponse: true,
+      }
     );
     await sleep(5000);
-
+    console.log("tx", tx);
+    const txInfo = await tronWeb.trx.getTransactionInfo(tx);
+    console.log("txInfo", txInfo);
     const tournamentAward = await tJoyTournaments.getTournamentAward(
       1000000000,
       accounts[2]
     );
+
+    console.log(tournamentAward);
 
     assert.isTrue(tournamentAward.received === false);
     assert.isTrue(tournamentAward.amount.toNumber() === 0);

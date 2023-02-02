@@ -20,6 +20,7 @@ contract TJoyArcade is
     Counters.Counter private _tokenIdCounter;
 
     mapping(uint256 => uint256) public genetics;
+    mapping(uint256 => uint256) public tokenIdToGen;
 
     constructor() ERC721("TronJoyArcade", "TJARC") {}
 
@@ -31,6 +32,10 @@ contract TJoyArcade is
         return genetics[_tokenId];
     }
 
+    function getTokenIdFromGen(uint256 _gen) public view returns (uint256) {
+        return genetics[_gen];
+    }
+
     function safeMint(address to, uint256 gen)
         public
         onlyMinter
@@ -38,6 +43,7 @@ contract TJoyArcade is
     {
         uint256 tokenId = _tokenIdCounter.current();
         genetics[tokenId] = gen;
+        tokenIdToGen[gen] = tokenId;
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
         return tokenId;
