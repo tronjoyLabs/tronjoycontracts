@@ -110,13 +110,6 @@ contract("Contracts testing", (accounts) => {
       await tJoyArcade.tokenOfOwnerByIndex(testAddress, 0)
     ).toNumber();
 
-    /* const awardTokenGen = (await tJoyGenetics.lastMintedToken()).toNumber();
-    console.log(awardTokenGen);
-    awardTokenId = (
-      await tJoyArcade.getTokenIdFromGen(awardTokenGen)
-    ).toNumber();*/
-    console.log(awardTokenId);
-
     assert.isTrue(available.length === 5);
     assert.isTrue(used.length === 5);
     assert.isTrue(totalMinted === 5);
@@ -239,7 +232,6 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Approve owner's nft transactions from tournaments contract", async () => {
-    console.log(awardTokenId);
     const tx = await tJoyArcade.approve(
       tronWeb.address.fromHex(TJoyTournaments.address),
       awardTokenId,
@@ -247,11 +239,11 @@ contract("Contracts testing", (accounts) => {
         shouldPollResponse: true,
       }
     );
-    console.log("tx", tx);
+
     const contractBalance = await tJoyArcade.getNftBalance(
       TJoyTournaments.address
     );
-    console.log(contractBalance.toNumber());
+
     assert.isTrue(contractBalance.toNumber() === 0);
   });
 
@@ -268,15 +260,12 @@ contract("Contracts testing", (accounts) => {
       }
     );
     await sleep(5000);
-    console.log("tx", tx);
+
     const txInfo = await tronWeb.trx.getTransactionInfo(tx);
-    console.log("txInfo", txInfo);
     const tournamentAward = await tJoyTournaments.getTournamentAward(
       1000000000,
       accounts[2]
     );
-
-    console.log(tournamentAward);
 
     assert.isTrue(tournamentAward.received === false);
     assert.isTrue(tournamentAward.amount.toNumber() === 0);
