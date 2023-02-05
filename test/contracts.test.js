@@ -23,7 +23,7 @@ contract("Contracts testing", (accounts) => {
     tronWeb = new TronWeb({
       fullHost: "http://127.0.0.1:9090",
       privateKey:
-        "da146374a75310b9666e834ee4ad0866d6f4035967bfc76217c5a495fff9f0d0",
+        "f017915411a0e7827e8f1f357c4ed2ccdcb1b1295cdb0fb0a5c13cbbd5da3734",
     });
 
     defaultAddress = "0x0000000000000000000000000000000000000000";
