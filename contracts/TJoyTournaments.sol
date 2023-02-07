@@ -33,11 +33,12 @@ contract TJoyTournaments is Ownable {
         uint256 nftId;
         IERC721 nft;
         bool received;
+        bool reclaimable;
     }
 
-    mapping(uint256 => mapping(address => Award)) awards;
+    mapping(uint256 => mapping(address => Award)) public awards;
 
-    mapping(uint256 => Tournament) tournaments;
+    mapping(uint256 => Tournament) public tournaments;
 
     constructor() {
         contractAddress = address(this);
@@ -49,26 +50,6 @@ contract TJoyTournaments is Ownable {
 
     function getContractBalance() public view returns (uint256) {
         return contractAddress.balance;
-    }
-
-    function getBusinessBalance() public view returns (uint256) {
-        return businessBalance;
-    }
-
-    function getTournament(uint256 _id)
-        public
-        view
-        returns (Tournament memory)
-    {
-        return tournaments[_id];
-    }
-
-    function getTournamentAward(uint256 _id, address _player)
-        public
-        view
-        returns (Award memory)
-    {
-        return awards[_id][_player];
     }
 
     function createTournament(
@@ -137,7 +118,8 @@ contract TJoyTournaments is Ownable {
             amount: _amount,
             nftId: _nftId,
             nft: _nft,
-            received: false
+            received: false,
+            reclaimable: true
         });
 
         if (_nftId != 0) {
@@ -145,6 +127,30 @@ contract TJoyTournaments is Ownable {
         }
 
         awards[_tournamentId][_player] = newAward;
+    }
+
+    function updateAward(
+        uint256 _tournamentId,
+        address _player,
+        uint256 _amount,
+        uint256 _nftId,
+        IERC721 _nft,
+        bool _reclaimable
+    ) public payable {
+        require(
+            awards[_tournamentId][_player].received == false,
+            "This award has been already claimed"
+        );
+
+        Award memory updatedAward = Award({
+            amount: _amount,
+            nftId: _nftId,
+            nft: _nft,
+            received: false,
+            reclaimable: _reclaimable
+        });
+
+        awards[_tournamentId][_player] = updatedAward;
     }
 
     function reclaimAward(uint256 _tournamentId) public payable {
@@ -156,6 +162,11 @@ contract TJoyTournaments is Ownable {
         require(
             awards[_tournamentId][msg.sender].received == false,
             "This award has been already taken"
+        );
+
+        require(
+            awards[_tournamentId][msg.sender].reclaimable == true,
+            "This award is not reclaimable"
         );
 
         if (awards[_tournamentId][msg.sender].amount != 0) {

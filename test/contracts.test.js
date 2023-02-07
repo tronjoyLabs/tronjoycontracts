@@ -144,7 +144,7 @@ contract("Contracts testing", (accounts) => {
       }
     );
 
-    const tournament = await tJoyTournaments.getTournament(1000000000);
+    const tournament = await tJoyTournaments.tournaments(1000000000);
 
     assert.isTrue(tournament.id.toNumber() === 1000000000);
     assert.isTrue(tournament.paused === false);
@@ -164,9 +164,9 @@ contract("Contracts testing", (accounts) => {
     });
     await sleep(5000);
 
-    const tournament = await tJoyTournaments.getTournament(1000000000);
+    const tournament = await tJoyTournaments.tournaments(1000000000);
     const contractBalance = await tJoyTournaments.getContractBalance();
-    const businessBalance = await tJoyTournaments.getBusinessBalance();
+    const businessBalance = await tJoyTournaments.businessBalance();
 
     assert.isTrue(tournament.id.toNumber() === 1000000000);
     assert.isTrue(tournament.payPool.toNumber() === 7);
@@ -191,9 +191,9 @@ contract("Contracts testing", (accounts) => {
     );
     await sleep(5000);
 
-    const tournament = await tJoyTournaments.getTournament(1000000001);
+    const tournament = await tJoyTournaments.tournaments(1000000001);
     const contractBalance = await tJoyTournaments.getContractBalance();
-    const businessBalance = await tJoyTournaments.getBusinessBalance();
+    const businessBalance = await tJoyTournaments.businessBalance();
 
     assert.isTrue(tournament.id.toNumber() === 1000000001);
     assert.isTrue(tournament.paused === false);
@@ -219,7 +219,7 @@ contract("Contracts testing", (accounts) => {
     );
     await sleep(5000);
 
-    const tournamentAward = await tJoyTournaments.getTournamentAward(
+    const tournamentAward = await tJoyTournaments.awards(
       1000000000,
       accounts[1]
     );
@@ -229,6 +229,55 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(
       tournamentAward.nft === tronWeb.address.toHex(defaultAddress)
     );
+  });
+
+  it("Set a second award (trx) in first non payable tournament", async () => {
+    await sleep(5000);
+    await tJoyTournaments.addAward(
+      1000000000,
+      accounts[3],
+      20,
+      0,
+      defaultAddress
+    );
+    await sleep(5000);
+
+    const tournamentAward = await tJoyTournaments.awards(
+      1000000000,
+      accounts[3]
+    );
+
+    assert.isTrue(tournamentAward.amount.toNumber() === 20);
+    assert.isTrue(tournamentAward.nftId.toNumber() === 0);
+    assert.isTrue(
+      tournamentAward.nft === tronWeb.address.toHex(defaultAddress)
+    );
+    assert.isTrue(tournamentAward.reclaimable === true);
+  });
+
+  it("Update second award raclaimable property to false", async () => {
+    await sleep(5000);
+    await tJoyTournaments.updateAward(
+      1000000000,
+      accounts[3],
+      20,
+      0,
+      defaultAddress,
+      false
+    );
+    await sleep(5000);
+
+    const tournamentAward = await tJoyTournaments.awards(
+      1000000000,
+      accounts[3]
+    );
+
+    assert.isTrue(tournamentAward.amount.toNumber() === 20);
+    assert.isTrue(tournamentAward.nftId.toNumber() === 0);
+    assert.isTrue(
+      tournamentAward.nft === tronWeb.address.toHex(defaultAddress)
+    );
+    assert.isTrue(tournamentAward.reclaimable === false);
   });
 
   it("Approve owner's nft transactions from tournaments contract", async () => {
@@ -261,8 +310,7 @@ contract("Contracts testing", (accounts) => {
     );
     await sleep(5000);
 
-    const txInfo = await tronWeb.trx.getTransactionInfo(tx);
-    const tournamentAward = await tJoyTournaments.getTournamentAward(
+    const tournamentAward = await tJoyTournaments.awards(
       1000000000,
       accounts[2]
     );
@@ -280,7 +328,7 @@ contract("Contracts testing", (accounts) => {
     await tJoyTournaments.reclaimAward(1000000000, { from: accounts[1] });
     await sleep(5000);
 
-    const tournament = await tJoyTournaments.getTournament(1000000000);
+    const tournament = await tJoyTournaments.tournaments(1000000000);
     const contractBalance = await tJoyTournaments.getContractBalance();
 
     assert.isTrue(contractBalance.toNumber() === 1090);
@@ -293,7 +341,7 @@ contract("Contracts testing", (accounts) => {
     await sleep(5000);
 
     const contractBalance = await tJoyTournaments.getContractBalance();
-    const tournamentAward = await tJoyTournaments.getTournamentAward(
+    const tournamentAward = await tJoyTournaments.awards(
       1000000000,
       accounts[2]
     );
