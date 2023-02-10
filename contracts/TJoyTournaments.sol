@@ -46,7 +46,36 @@ contract TJoyTournaments is Ownable {
         contractOwner = msg.sender;
     }
 
-    event Register(uint256 tournamentId, address playerAddress);
+    event TournamentCreated(
+        uint256 tournamentId,
+        uint256 price,
+        uint256 fee,
+        uint256 initPool,
+        uint256 beginingDate,
+        uint256 finishDate,
+        IERC721 nft
+    );
+
+    event PlayerRegistered(uint256 tournamentId, address playerAddress);
+
+    event AwardAdded(
+        uint256 tournamentId,
+        address player,
+        uint256 amount,
+        uint256 nftId,
+        IERC721 nft
+    );
+
+    event AwardUpdated(
+        uint256 tournamentId,
+        address player,
+        uint256 amount,
+        uint256 nftId,
+        IERC721 nft,
+        bool reclaimable
+    );
+
+    event AwardReclaimed(uint256 tournamentId, address player);
 
     function getContractBalance() public view returns (uint256) {
         return contractAddress.balance;
@@ -65,8 +94,10 @@ contract TJoyTournaments is Ownable {
             "_initPoolAmount does not match with msg.value"
         );
 
+        uint256 tournamentId = nextTournamentId;
+
         Tournament memory newTournament = Tournament({
-            id: nextTournamentId,
+            id: tournamentId,
             paused: false,
             price: _price,
             fee: _fee,
@@ -84,6 +115,16 @@ contract TJoyTournaments is Ownable {
         businessBalance += msg.value;
 
         nextTournamentId += 1;
+
+        emit TournamentCreated(
+            tournamentId,
+            _price,
+            _fee,
+            _initPoolAmount,
+            _beginingDate,
+            _finishDate,
+            _nft
+        );
     }
 
     function registerPlayer(uint256 _tournamentId) public payable {
@@ -104,7 +145,7 @@ contract TJoyTournaments is Ownable {
 
         tournaments[_tournamentId].payPool += msg.value - fee;
 
-        emit Register(_tournamentId, msg.sender);
+        emit PlayerRegistered(_tournamentId, msg.sender);
     }
 
     function addAward(
@@ -127,6 +168,8 @@ contract TJoyTournaments is Ownable {
         }
 
         awards[_tournamentId][_player] = newAward;
+
+        emit AwardAdded(_tournamentId, _player, _amount, _nftId, _nft);
     }
 
     function updateAward(
@@ -151,6 +194,15 @@ contract TJoyTournaments is Ownable {
         });
 
         awards[_tournamentId][_player] = updatedAward;
+
+        emit AwardUpdated(
+            _tournamentId,
+            _player,
+            _amount,
+            _nftId,
+            _nft,
+            _reclaimable
+        );
     }
 
     function reclaimAward(uint256 _tournamentId) public payable {
@@ -190,5 +242,7 @@ contract TJoyTournaments is Ownable {
                 awards[_tournamentId][msg.sender].nftId
             );
         }
+
+        emit AwardReclaimed(_tournamentId, msg.sender);
     }
 }
