@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "lite-server -c ./bs-config.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "migrate": "bash scripts/migrate-and-setup.sh"
+    "migrate": "bash scripts/migrate-and-setup.sh",
+    "watch": "node watcher.js"
   },
   "originalAuthors": "truffle-box",
   "author": {
@@ -18,12 +19,16 @@
   "license": "MIT",
   "devDependencies": {
     "chalk": "^2.4.1",
+    "dotenv": "^16.0.3",
     "lite-server": "^2.5.4"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.3",
     "@openzeppelin/contracts-upgradeable": "^4.7.3",
+    "fs": "^0.0.1-security",
     "keccak256": "^1.0.6",
+    "mongoose": "^6.9.1",
+    "mongoose-long": "^0.6.0",
     "tronweb": "^5.0.0"
   }
 }

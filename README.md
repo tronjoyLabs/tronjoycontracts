@@ -166,7 +166,7 @@ export class TournamentController {
     try {
       const tJoyTournaments = await this.tronUtils.createTorunamentsInstance();
 
-      const createResponse = await tJoyTournaments
+      await tJoyTournaments
         .createTournament(
           10,
           30,
@@ -180,8 +180,6 @@ export class TournamentController {
           feeLimit: 800000000,
           shouldPollResponse: false,
         });
-
-      console.log('Create response: ', createResponse);
 
       const createdTournament = await tJoyTournaments
         .tournaments(1000000002)

@@ -1,0 +1,1 @@
+tronbox migrate --reset --network development
