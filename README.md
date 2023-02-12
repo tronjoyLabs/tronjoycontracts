@@ -126,80 +126,28 @@ Ejecutaremos para ello:
 tronbox test
 ```
 
-## Utilizar una aplicación de js con la red de Tron:
+## Lanzar los eventos:
 
-```js
-import * as TronWeb from "tronweb";
+- Arrancar el nodo de Tron:
 
-export class TronUtils {
-  tronWeb: TronWeb;
-
-  constructor() {
-    this.tronWeb = new TronWeb({
-      fullHost: "http://127.0.0.1:9090",
-      privateKey:
-        "f017915411a0e7827e8f1f357c4ed2ccdcb1b1295cdb0fb0a5c13cbbd5da3734",
-    });
-  }
-
-  createTorunamentsInstance = async () => {
-    return await this.tronWeb
-      .contract()
-      .at("TT8CUMDWYEwMGAvYsDjTm1SAo1SLerRC8f");
-  };
-}
+```
+sh start_node.sh
 ```
 
-```js
-import { TronUtils } from '@duelers/shared/backend/tronweb';
+- Desplegar los contratos en nuestra red local:
 
-@Controller('tournament')
-export class TournamentController {
-  tronUtils: TronUtils;
+```
+sh scripts/local-migrate.sh
+```
 
-  constructor(private readonly tournamentService: TournamentService) {
-    this.tronUtils = new TronUtils();
-  }
+- Arrancar los watchers:
 
-  @Post('checkContract')
-  async checkContract() {
-    try {
-      const tJoyTournaments = await this.tronUtils.createTorunamentsInstance();
+```
+npm run watch
+```
 
-      await tJoyTournaments
-        .createTournament(
-          10,
-          30,
-          100,
-          1675288763,
-          1675288963,
-          'TX5zDqPVvEq7eqVsVHb4N2k8MpzyuSwDYg'
-        )
-        .send({
-          callValue: 100,
-          feeLimit: 800000000,
-          shouldPollResponse: false,
-        });
+- Hacer llamadas a los contratos para generar eventos:
 
-      const createdTournament = await tJoyTournaments
-        .tournaments(1000000002)
-        .call();
-
-      console.log('Tournament:', createdTournament);
-
-      const firstTournamentAward = await tJoyTournaments
-        .awards(1000000000, 'TTwP5QU2hCE3ho8WuNB811AD9jMTSoabKp')
-        .call();
-
-      console.log('Awards from first tournament:', firstTournamentAward);
-
-      return { sucess: true, message: `Tournament created` };
-    } catch (error) {
-      return {
-        success: false,
-        message: `There is the following error: ${error}`,
-      };
-    }
-  }
-}
+```
+node events-generator/calls.js
 ```
