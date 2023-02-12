@@ -9,9 +9,7 @@ module.exports = async function (deployer) {
 
   appendFile(
     path.join(__dirname, "../.env"),
-    `TOURNAMENTS_ADDRESS=${tronWeb.address.fromHex(
-      TJoyTournaments.address
-    )}\nOWNER_PRIVATE_KEY=f017915411a0e7827e8f1f357c4ed2ccdcb1b1295cdb0fb0a5c13cbbd5da3734`,
+    `TOURNAMENTS_ADDRESS=${tronWeb.address.fromHex(TJoyTournaments.address)}\n`,
     (error) => {
       if (error) {
         console.log(`Tournaments write file error: ${error}`);

@@ -1,12 +1,12 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const { tronWeb } = require("./tronWeb");
-const TronEvent = require("./TronEvent");
+const { tronWeb } = require("../tronWeb");
+const TronEvent = require("./EventModel");
 
 mongoose.set("strictQuery", false);
 
 mongoose
-  .connect("mongodb://localhost:27017/duelers-node")
+  .connect(process.env.MONGO_CONNECTION)
   .then(() => {
     console.log("Duelers-node database connected");
   })
@@ -15,13 +15,32 @@ mongoose
   });
 
 const instanceTournaments = async () => {
-  const contract = await tronWeb.contract().at(process.env.TOURNAMENTS_ADDRESS);
+  const instance = await tronWeb.contract().at(process.env.TOURNAMENTS_ADDRESS);
 
-  return contract;
+  return instance;
+};
+
+const instanceArcade = async () => {
+  const instance = await tronWeb.contract().at(process.env.ARCADE_ADDRESS);
+
+  return instance;
 };
 
 const init = async () => {
+  await TronEvent.deleteMany();
+
   const tournaments = await instanceTournaments();
+  const arcade = await instanceArcade();
+
+  arcade.NftMinted().watch(async (error, result) => {
+    if (!error) {
+      await TronEvent.create(result);
+
+      console.log("Nft minted: ", result);
+    } else {
+      console.log(`Nft mint error: ${error}`);
+    }
+  });
 
   tournaments.TournamentCreated().watch(async (error, result) => {
     if (!error) {
@@ -33,8 +52,10 @@ const init = async () => {
     }
   });
 
-  tournaments.PlayerRegistered().watch((error, result) => {
+  tournaments.PlayerRegistered().watch(async (error, result) => {
     if (!error) {
+      await TronEvent.create(result);
+
       console.log("Player registered event: ", result);
     } else {
       console.log(`Player registered event error: ${error}`);
@@ -64,6 +85,8 @@ const init = async () => {
       console.log(`Award reclaimed event error: ${error}`);
     }
   });
+
+  console.log("Watching Tron events");
 };
 
 init();
