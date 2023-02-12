@@ -2,7 +2,13 @@ const TJoyArcade = artifacts.require("./TJoyArcade");
 const TJoyGenetics = artifacts.require("./TJoyGenetics");
 const TJoyMint = artifacts.require("./TJoyMint");
 const TJoyTournaments = artifacts.require("./TJoyTournaments");
-const { tronWeb } = require("../tronWeb");
+const TronWeb = require("tronweb");
+
+const tronWeb = new TronWeb({
+  fullHost: "http://127.0.0.1:9090",
+  privateKey:
+    "f017915411a0e7827e8f1f357c4ed2ccdcb1b1295cdb0fb0a5c13cbbd5da3734",
+});
 
 const sleep = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));

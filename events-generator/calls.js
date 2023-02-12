@@ -1,4 +1,7 @@
 require("dotenv").config();
+const { formattedAddresses } = require("./formattedAddresses");
+
+const { mintAddress, geneticsAddress, arcadeAddress } = formattedAddresses;
 
 const { instanceContracts } = require("./instanceContracts");
 
@@ -16,22 +19,22 @@ const init = async () => {
     arcadeOwner,
   } = await instanceContracts();
 
-  await mintOwner.changeNfts(process.env.ARCADE_ADDRESS).send({
+  await mintOwner.changeNfts(arcadeAddress).send({
     feeLimit: 800000000,
     shouldPollResponse: false,
   });
 
-  await mintOwner.changeGen(process.env.GENETICS_ADDRESS).send({
+  await mintOwner.changeGen(geneticsAddress).send({
     feeLimit: 800000000,
     shouldPollResponse: false,
   });
 
-  await arcadeOwner.addMinter(process.env.MINT_ADDRESS).send({
+  await arcadeOwner.addMinter(mintAddress).send({
     feeLimit: 800000000,
     shouldPollResponse: false,
   });
 
-  await geneticsOwner.addMinter(process.env.MINT_ADDRESS).send({
+  await geneticsOwner.addMinter(mintAddress).send({
     feeLimit: 800000000,
     shouldPollResponse: false,
   });
@@ -56,14 +59,7 @@ const init = async () => {
   });
 
   await tournamentsOwner
-    .createTournament(
-      10,
-      30,
-      100,
-      beginingDate,
-      finishDate,
-      process.env.ARCADE_ADDRESS
-    )
+    .createTournament(10, 30, 100, beginingDate, finishDate, arcadeAddress)
     .send({
       callValue: 100,
       feeLimit: 800000000,

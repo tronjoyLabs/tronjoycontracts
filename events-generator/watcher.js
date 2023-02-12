@@ -1,7 +1,7 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const { tronWeb } = require("../tronWeb");
 const TronEvent = require("./EventModel");
+const { instanceContracts } = require("./instanceContracts");
 
 mongoose.set("strictQuery", false);
 
@@ -14,25 +14,12 @@ mongoose
     console.log(`Duelers-node database connection error: ${error}`);
   });
 
-const instanceTournaments = async () => {
-  const instance = await tronWeb.contract().at(process.env.TOURNAMENTS_ADDRESS);
-
-  return instance;
-};
-
-const instanceArcade = async () => {
-  const instance = await tronWeb.contract().at(process.env.ARCADE_ADDRESS);
-
-  return instance;
-};
-
 const init = async () => {
   await TronEvent.deleteMany();
 
-  const tournaments = await instanceTournaments();
-  const arcade = await instanceArcade();
+  const { tournamentsOwner, arcadeOwner } = await instanceContracts();
 
-  arcade.NftMinted().watch(async (error, result) => {
+  arcadeOwner.NftMinted().watch(async (error, result) => {
     if (!error) {
       await TronEvent.create(result);
 
@@ -42,7 +29,7 @@ const init = async () => {
     }
   });
 
-  tournaments.TournamentCreated().watch(async (error, result) => {
+  tournamentsOwner.TournamentCreated().watch(async (error, result) => {
     if (!error) {
       await TronEvent.create(result);
 
@@ -52,7 +39,7 @@ const init = async () => {
     }
   });
 
-  tournaments.PlayerRegistered().watch(async (error, result) => {
+  tournamentsOwner.PlayerRegistered().watch(async (error, result) => {
     if (!error) {
       await TronEvent.create(result);
 
@@ -62,7 +49,7 @@ const init = async () => {
     }
   });
 
-  tournaments.AwardAdded().watch((error, result) => {
+  tournamentsOwner.AwardAdded().watch((error, result) => {
     if (!error) {
       console.log("Award added event: ", result);
     } else {
@@ -70,7 +57,7 @@ const init = async () => {
     }
   });
 
-  tournaments.AwardUpdated().watch((error, result) => {
+  tournamentsOwner.AwardUpdated().watch((error, result) => {
     if (!error) {
       console.log("Award updated event: ", result);
     } else {
@@ -78,7 +65,7 @@ const init = async () => {
     }
   });
 
-  tournaments.AwardReclaimed().watch((error, result) => {
+  tournamentsOwner.AwardReclaimed().watch((error, result) => {
     if (!error) {
       console.log("Award reclaimed event: ", result);
     } else {
