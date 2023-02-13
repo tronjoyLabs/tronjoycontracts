@@ -60,7 +60,7 @@ contract TJoyTournaments is Ownable {
 
     event AwardAdded(
         uint256 tournamentId,
-        address player,
+        address playerAddress,
         uint256 amount,
         uint256 nftId,
         IERC721 nft
@@ -68,7 +68,7 @@ contract TJoyTournaments is Ownable {
 
     event AwardUpdated(
         uint256 tournamentId,
-        address player,
+        address playerAddress,
         uint256 amount,
         uint256 nftId,
         IERC721 nft,

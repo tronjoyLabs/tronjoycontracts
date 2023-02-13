@@ -24,7 +24,7 @@ contract TJoyArcade is
 
     constructor() ERC721("TronJoyArcade", "TJARC") {}
 
-    event NftMinted(address owner, uint256 id, uint256 genetic);
+    event NftMinted(address owner, uint256 nftId, uint256 genetic);
 
     function getNftBalance(address _address) public view returns (uint256) {
         return balanceOf(_address);

@@ -49,24 +49,30 @@ const init = async () => {
     }
   });
 
-  tournamentsOwner.AwardAdded().watch((error, result) => {
+  tournamentsOwner.AwardAdded().watch(async (error, result) => {
     if (!error) {
+      await TronEvent.create(result);
+
       console.log("Award added event: ", result);
     } else {
       console.log(`Award added event error: ${error}`);
     }
   });
 
-  tournamentsOwner.AwardUpdated().watch((error, result) => {
+  tournamentsOwner.AwardUpdated().watch(async (error, result) => {
     if (!error) {
+      await TronEvent.create(result);
+
       console.log("Award updated event: ", result);
     } else {
       console.log(`Award updated event error: ${error}`);
     }
   });
 
-  tournamentsOwner.AwardReclaimed().watch((error, result) => {
+  tournamentsOwner.AwardReclaimed().watch(async (error, result) => {
     if (!error) {
+      await TronEvent.create(result);
+
       console.log("Award reclaimed event: ", result);
     } else {
       console.log(`Award reclaimed event error: ${error}`);

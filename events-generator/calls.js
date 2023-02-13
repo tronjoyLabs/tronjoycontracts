@@ -74,6 +74,21 @@ const init = async () => {
     shouldPollResponse: false,
   });
 
+  await sleep(5000);
+
+  await tournamentsOwner
+    .addAward(
+      1000000000,
+      "TTwP5QU2hCE3ho8WuNB811AD9jMTSoabKp",
+      100,
+      0,
+      "0x0000000000000000000000000000000000000000"
+    )
+    .send({
+      feeLimit: 800000000,
+      shouldPollResponse: false,
+    });
+
   process.exit(0);
 };
 
