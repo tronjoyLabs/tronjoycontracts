@@ -56,6 +56,16 @@ contract TJoyTournaments is Ownable {
         IERC721 nft
     );
 
+    event TournamentUpdated(
+        uint256 tournamentId,
+        uint256 price,
+        uint256 fee,
+        uint256 initPool,
+        uint256 beginingDate,
+        uint256 finishDate,
+        IERC721 nft
+    );
+
     event PlayerRegistered(uint256 tournamentId, address playerAddress);
 
     event AwardAdded(
@@ -118,6 +128,63 @@ contract TJoyTournaments is Ownable {
 
         emit TournamentCreated(
             tournamentId,
+            _price,
+            _fee,
+            _initPoolAmount,
+            _beginingDate,
+            _finishDate,
+            _nft
+        );
+    }
+
+    function updateTournament(
+        uint256 _tournamentId,
+        uint256 _price,
+        uint256 _fee,
+        uint256 _initPoolAmount,
+        uint256 _beginingDate,
+        uint256 _finishDate,
+        bool _paused,
+        IERC721 _nft
+    ) public payable onlyOwner {
+        if (_beginingDate != tournaments[_tournamentId].beginingDate) {
+            require(
+                block.timestamp < tournaments[_tournamentId].beginingDate,
+                "This tournament has already started"
+            );
+        }
+
+        require(
+            block.timestamp < tournaments[_tournamentId].finishDate,
+            "This tournament has already finished"
+        );
+
+        if (_initPoolAmount > tournaments[_tournamentId].initPool) {
+            require(
+                msg.value + tournaments[_tournamentId].initPool ==
+                    _initPoolAmount,
+                "Amounts do not match"
+            );
+        }
+
+        Tournament memory updatedTournament = Tournament({
+            id: _tournamentId,
+            paused: _paused,
+            price: _price,
+            fee: _fee,
+            initPool: _initPoolAmount,
+            payPool: tournaments[_tournamentId].payPool,
+            distributed: tournaments[_tournamentId].payPool,
+            beginingDate: _beginingDate,
+            finishDate: _finishDate,
+            nft: _nft,
+            isReclaimable: tournaments[_tournamentId].isReclaimable
+        });
+
+        tournaments[nextTournamentId] = updatedTournament;
+
+        emit TournamentUpdated(
+            _tournamentId,
             _price,
             _fee,
             _initPoolAmount,
