@@ -13,8 +13,12 @@ const init = async () => {
   const {
     tournamentsOwner,
     tournamentsAccountOne,
+    tournamentsAccountTwo,
+    tournamentsAccountThree,
     mintOwner,
     mintAccountOne,
+    mintAccountTwo,
+    mintAccountThree,
     geneticsOwner,
     arcadeOwner,
   } = await instanceContracts();
@@ -58,6 +62,16 @@ const init = async () => {
     shouldPollResponse: false,
   });
 
+  await mintAccountTwo.mint().send({
+    feeLimit: 800000000,
+    shouldPollResponse: false,
+  });
+
+  await mintAccountThree.mint().send({
+    feeLimit: 800000000,
+    shouldPollResponse: false,
+  });
+
   await tournamentsOwner
     .createTournament(10, 30, 100, beginingDate, finishDate, arcadeAddress)
     .send({
@@ -69,6 +83,18 @@ const init = async () => {
   await sleep(5000);
 
   await tournamentsAccountOne.registerPlayer(1000000000).send({
+    callValue: 10,
+    feeLimit: 800000000,
+    shouldPollResponse: false,
+  });
+
+  await tournamentsAccountTwo.registerPlayer(1000000000).send({
+    callValue: 10,
+    feeLimit: 800000000,
+    shouldPollResponse: false,
+  });
+
+  await tournamentsAccountThree.registerPlayer(1000000000).send({
     callValue: 10,
     feeLimit: 800000000,
     shouldPollResponse: false,
