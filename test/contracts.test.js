@@ -348,4 +348,60 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(contractBalance.toNumber() === 1090);
     assert.isTrue(tournamentAward.received === true);
   });
+
+  it("Create a second payable tournament", async () => {
+    const beginingDate = parseInt(Date.now() / 1000);
+    const finishDate = beginingDate + 30;
+    await tJoyTournaments.createTournament(
+      10,
+      30,
+      100,
+      beginingDate,
+      finishDate,
+      TJoyArcade.address,
+      {
+        callValue: 100,
+      }
+    );
+
+    const tournament = await tJoyTournaments.tournaments(1000000002);
+
+    assert.isTrue(tournament.id.toNumber() === 1000000002);
+    assert.isTrue(tournament.paused === false);
+    assert.isTrue(tournament.price.toNumber() === 10);
+    assert.isTrue(tournament.fee.toNumber() === 30);
+    assert.isTrue(tournament.initPool.toNumber() === 100);
+    assert.isTrue(tournament.payPool.toNumber() === 0);
+    assert.isTrue(tournament.beginingDate.toNumber() === beginingDate);
+    assert.isTrue(tournament.finishDate.toNumber() === finishDate);
+  });
+
+  it("Update second payable tournament", async () => {
+    const beginingDate = parseInt(Date.now() / 1000);
+    const finishDate = beginingDate + 30;
+    await tJoyTournaments.updateTournament(
+      1000000002,
+      20,
+      30,
+      150,
+      beginingDate,
+      finishDate,
+      false,
+      TJoyArcade.address,
+      {
+        callValue: 50,
+      }
+    );
+
+    const tournament = await tJoyTournaments.tournaments(1000000002);
+
+    assert.isTrue(tournament.id.toNumber() === 1000000002);
+    assert.isTrue(tournament.paused === false);
+    assert.isTrue(tournament.price.toNumber() === 20);
+    assert.isTrue(tournament.fee.toNumber() === 30);
+    assert.isTrue(tournament.initPool.toNumber() === 150);
+    assert.isTrue(tournament.payPool.toNumber() === 0);
+    assert.isTrue(tournament.beginingDate.toNumber() === beginingDate);
+    assert.isTrue(tournament.finishDate.toNumber() === finishDate);
+  });
 });

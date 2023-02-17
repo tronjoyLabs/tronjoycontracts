@@ -39,6 +39,16 @@ const init = async () => {
     }
   });
 
+  tournamentsOwner.TournamentUpdated().watch(async (error, result) => {
+    if (!error) {
+      await TronEvent.create(result);
+
+      console.log("Tournament updated event: ", result);
+    } else {
+      console.log(`Tournament updated event error: ${error}`);
+    }
+  });
+
   tournamentsOwner.PlayerRegistered().watch(async (error, result) => {
     if (!error) {
       await TronEvent.create(result);

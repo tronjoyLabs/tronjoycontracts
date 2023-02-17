@@ -80,6 +80,31 @@ const init = async () => {
       shouldPollResponse: false,
     });
 
+  await tournamentsOwner
+    .createTournament(10, 30, 100, beginingDate, finishDate, arcadeAddress)
+    .send({
+      callValue: 100,
+      feeLimit: 800000000,
+      shouldPollResponse: false,
+    });
+
+  await tournamentsOwner
+    .updateTournament(
+      1000000001,
+      20,
+      30,
+      150,
+      beginingDate,
+      finishDate,
+      false,
+      arcadeAddress
+    )
+    .send({
+      callValue: 50,
+      feeLimit: 800000000,
+      shouldPollResponse: false,
+    });
+
   await sleep(5000);
 
   await tournamentsAccountOne.registerPlayer(1000000000).send({

@@ -181,7 +181,7 @@ contract TJoyTournaments is Ownable {
             isReclaimable: tournaments[_tournamentId].isReclaimable
         });
 
-        tournaments[nextTournamentId] = updatedTournament;
+        tournaments[_tournamentId] = updatedTournament;
 
         emit TournamentUpdated(
             _tournamentId,
