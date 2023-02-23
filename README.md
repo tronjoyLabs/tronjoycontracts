@@ -151,3 +151,9 @@ npm run watch
 ```
 node events-generator/calls.js
 ```
+
+## Desplegar en la testnet de Shasta el comando es el siguiente:
+
+```sh
+sh scripts/shasta-migrate.sh
+```
