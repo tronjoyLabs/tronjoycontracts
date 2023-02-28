@@ -22,7 +22,9 @@ contract TJoyArcade is
     mapping(uint256 => uint256) public genetics;
     mapping(uint256 => uint256) public tokenIdToGen;
 
-    constructor() ERC721("TronJoyArcade", "TJARC") {}
+    constructor() ERC721("TronJoyArcade", "TJARC") {
+        _tokenIdCounter._value = 1;
+    }
 
     event NftMinted(address owner, uint256 nftId, uint256 genetic);
 
