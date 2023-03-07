@@ -1,83 +1,135 @@
-# instalacion
+# Tronjoy Contracts
 
-1. instalar tronbox
+<img src="./images/tronjoy-logo.png" alt="tronjoy-logo" />
 
-```
+## Descripción
+
+Este repositorio contiene una colección de contratos acompañados de sus tests, herramientas de despliegue y scripts de lanzamientos de eventos.
+La función principal de estos contratos es la de gestionar los torneos de la dapp de Tronjoy y el minteo de los nfts asociados.
+
+## Primeros pasos
+
+### Instalar tronbox en nuestra máquina de manera global
+
+TronBox es una herramienta para desarrollar, probar e implementar contratos inteligentes. Está diseñado para cadenas de bloques que utilizan la máquina virtual TRON (TVM). Compilación, vinculación, implementación y administración binaria de contratos inteligentes incorporados.
+
+Para instalarlo en nuestro sistema operativo utilizaremos el comando:
+
+```sh
 npm install -g tronbox
 ```
 
-3. instalar openzeppelin
+### Decargar el repositorio
 
+Nos ubicaremos con nuestra terminal en el directorio en el que queramos que esté ubicado el proyecto y después ejecutarmos el siguiente comando:
+
+```sh
+http://gitlab.3fera.com/tronjoy/contracts-tron.git
 ```
+
+### Instalar todos los paquetes de software necesarios
+
+Dentro del direcorio raíz del proyecto ejecutaremos el comando:
+
+```sh
 npm i
-npm install @openzeppelin/contracts
 ```
 
-4. reemplazar todas las funciones isContract por isContractTron desde visual Studio en la carpeta node_modules/@openzeppelin
+### Adaptar los contratos de Open Zeppelin
 
-# uso
+OpenZeppelin es un conjunto de contratos inteligentes auditados y aprobados por su comunidad, completamente seguros y listos para ser utilizados en tus propios contratos. Al utilizar contratos de OpenZeppelin, obtienes los siguientes beneficios: Desarrollo de casos de uso complejos. Reducción del tiempo de desarrollo.
 
-Se puede trabajar en diferentes networks. De primeras trabajamos en local para no necesitar recursos. Para levantar un nodo en local de tron:
+Si nos fijamos en nuestro package.json, tenemos declarado como dependencia open zeppelin, lo que significa que nuestra carpeta node_modules tiene que contener un directorio llamado @openzeppelin el cual contendrá los contratos.
 
-```
+Dichos contratos, están preparados para funcionar dentro de la máquina virtual de Ethereum. El problema que tenemos es que, en este caso, vamos a trabajar con la TVM (Tron Virtual Machine) por lo que tenemos que hacer una modificación que consistirá en reemplazar todas las funciones isContract por isContractTron desde visual Studio en la carpeta node_modules/@openzeppelin.
+
+## Entornos de trabajo
+
+Debido a las particularidades que presenta este desarrollo usaremos tres entornos de trabajo diferentes que vamos a explicar a continuación.
+
+### Local
+
+Cuando hablamos de entorno de trabajo local nos referimos a crear un nodo en nuestro propio equipo. Este nodo será el único de una TVM local que arrancaremos en un docker.
+
+Este entorno será el que empleaaremos para realizar el testing y generar eventos que generen una colección de MngoDB que nos servirá para hacer pruebas en el backend de nuestra dapp.
+
+### Testnet (Shasta)
+
+Cuando estemos testeando nuestra dapp en desarrollo apuntaremos a los contratos inteligentes que tengamos desplegados en la red de pruebas.
+
+### Red principal de tron (Tron Mainnet)
+
+Aquí desplegaremos los contratos definitivos a los que apuntaremos en producción.
+
+## Arranque del nodo local
+
+Las instrucciones de descarga y arranque las tenemos en el siguiente repositorio: https://github.com/TRON-US/docker-tron-quickstart no obstante, vamos a repasar los comandos más importantes.
+
+Como vamos a correr la TVM en un docker, en primer lugar debemos asegurarnos de tener Docker instalado y arrancado.
+
+Una vez tengamos docker preparado en nuestro equipo ejecutaremos el comando:
+
+```sh
 ./start_node.sh
 ```
 
-Una vez arrancado podemos lanzar el despliegue con:
+Con ello ejecutaremos un archivo start_node.sh que se encuentra en la raíz de nuestro proyecto y que contiene una instrucción docker run para arrancar nuestro contenedor:
 
+```sh
+docker run -it --rm \
+  -p 9090:9090 \
+  -e "defaultBalance=100000" \
+  -e "showQueryString=true" \
+  -e "showBody=true" \
+  -e "formatJson=true" \
+  -e "mnemonic=treat nation math panel calm spy much obey moral hazard they sorry" \
+  --name tron \
+  trontools/quickstart
 ```
-tronbox migrate --reset
+
+En en comando podemos apreciar que tenemos el contenedor corriendo en el puerto 9090 de nuestro contenedor y lo mapeamos al mismo 9090 de nuestro sistema operativo.
+
+También podemos ver que utilizamos diferentes variables de entorno (opción -e). Las más importantes de estas variables de entorno son:
+
+- defaultBalance: Se trata del balace por defecto de cada una de las cuentas que van a generase en nuestra TVM local.
+
+- mnemonic: Es un conjunto de palabras que va a posibilitar que las cuentas generadas sean siempre las mismas de manera que no podremos hacer pruebas con la seguridad de que siempre vamos a emplear las mismas claves. Con esto nos ahorramos tener que cambiarlas cada vez que arranquemos de nuevo el nodo.
+
+## Lanzamiento de los tests
+
+Dentro de la carpeta test encontraremos un archivo llamado contracts.test.js. Es aquí donde se encuentran nuestros tests.
+
+Para ejecutarlos ejecutaremos el siguiente comando:
+
+```sh
+tronbox test
 ```
 
-Si quisieramos otra red debemos especificarlo de la siguiente forma:
+Si los tests han dado resultado positivo la terminal mostrará una pantall similar a esta:
 
-```
-tronbox migrate --reset --network shata
-```
+<img src="./images/test-result.png" alt="test-result" />
 
-Las configuraciones de las redes se introducen en tronbox.js
+## Cómo migrar los contratos
 
-```
-networks: {
-    mainnet: {
-      // Don't put your private key here:
-      privateKey: process.env.PRIVATE_KEY_MAINNET,
-      /*
-Create a .env file (it must be gitignored) containing something like
+Para poder llamar a los contratos en la máquina virtual primeramente hay que migrarlos. La cofiguración para realizar está migración debemos hacerla en el archivo tronbox.js que se encuentra en la raíz de nuestro proyecto.
 
-  export PRIVATE_KEY_MAINNET=4E7FECCB71207B867C495B51A9758B104B1D4422088A87F4978BE64636656243
+A continuación vamos a mostrar cómo tendríamos el archivo configurado para hacer un despliegue en la TVM local o en la testnet de Shasta.
 
-Then, run the migration with:
-
-  source .env && tronbox migrate --network mainnet
-
-*/
-      userFeePercentage: 100,
-      feeLimit: 1000 * 1e6,
-      fullHost: "https://api.trongrid.io",
-      network_id: "1",
-    },
+```js
+module.exports = {
+  networks: {
     shasta: {
-      privateKey: process.env.PRIVATE_KEY_SHASTA,
+      privateKey: process.env.SHASTA_OWNER_ACCOUNT,
       userFeePercentage: 50,
       feeLimit: 1000 * 1e6,
       fullHost: "https://api.shasta.trongrid.io",
       network_id: "2",
     },
-    nile: {
-      privateKey: process.env.PRIVATE_KEY_NILE,
-      userFeePercentage: 100,
-      feeLimit: 1000 * 1e6,
-      fullHost: "https://api.nileex.io",
-      network_id: "3",
-    },
     development: {
-      // For trontools/quickstart docker image
-      privateKey:
-        "da146374a75310b9666e834ee4ad0866d6f4035967bfc76217c5a495fff9f0d0",
+      privateKey: process.env.LOCAL_OWNER_ACCOUNT,
       userFeePercentage: 0,
       feeLimit: 1000 * 1e6,
-      fullHost: "http://127.0.0.1:" + port,
+      fullHost: "http://127.0.0.1:9090",
       network_id: "9",
     },
     compilers: {
@@ -86,47 +138,32 @@ Then, run the migration with:
       },
     },
   },
+};
 ```
 
-TODO
+Con este archivo correctamente configurado y el nodo arrancado (recordemos que podíamos ponerlo en marcha con < ./start_node.sh >) ya podemos hacer una migración a local (en las networks sería development).
 
-evento mint(usario que recibe, id del token, genetica)
+Dentro de la carpeta scripts tenemos dos ejecutables local-migrate.sh y shasta-migrate.sh que nos permitirán migrar los contraos a las redes de localhost y shasta respectivamente.
 
-contrato de genética extract genetic lo tiene que hacer el contrato de mintado con el rol de setGen y en el contrato del token debe tener el rol de minter
+Para migrar a la máquina virtual local ejecutaremos:
 
-# Testing:
-
-## Descripción:
-
-Los tests nos permitirán testear de una manera rápida todos los métodos de nuestros contratos.
-
-## Ejecución:
-
-### Compilaremos nuestros contratos en caso de no haberlo hecho:
-
-Para la compilación utilizaremos:
-
-```
-tronbox compile
+```sh
+./scripts/local-migrate.sh
 ```
 
-### Levantar un nodo en local:
+Si quisieramos migralo a Shasta lo haríamos de la siguiente forma:
 
-Como ya hemos visto anteriormente, para levantar un nodo local ejecutaremos el siguiente comando:
-
-```
-./start_node.sh
+```sh
+./scripts/shasta-migrate.sh
 ```
 
-### Ejecución de los test:
+## Lanzar los eventos para generar documentos en MongoDB:
 
-Ejecutaremos para ello:
+Para trabajar en el desarrollo de nuestro backend nos conviene tener una base de datos de MongoDB poblada con eventos generados localmente que el producer pueda procesar.
 
-```
-tronbox test
-```
+Comentar que, previamente, deberemos de arrancar una base de datos de MongoDB en el puerto 27017 de nuestra máquina.
 
-## Lanzar los eventos:
+Una vez hecho esto, los pasos para generar estos eventos serán los siguientes:
 
 - Arrancar el nodo de Tron:
 
@@ -152,8 +189,6 @@ npm run watch
 node events-generator/calls.js
 ```
 
-## Desplegar en la testnet de Shasta el comando es el siguiente:
+Una vez terminado el proceso, deberíamos tener nuestra base de datos poblada con eventos como los que aparecen en la siguiente imágen.
 
-```sh
-sh scripts/shasta-migrate.sh
-```
+<img src="./images/mongo-events.png" alt="mongo-events" />
