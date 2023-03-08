@@ -39,10 +39,11 @@ contract("Contracts testing", (accounts) => {
   });
 
   it("Add genetics to contract", async () => {
-    let genetics = [
+    const genetics = [
       1000000001, 1000000002, 1000000003, 1000000004, 1000000005, 1000000006,
       1000000007, 1000000008, 1000000009, 1000000010,
     ];
+
     await tJoyGenetics.addGenetics(genetics);
     const available = await tJoyGenetics.getAvailable();
     const used = await tJoyGenetics.getUsed();
@@ -56,10 +57,13 @@ contract("Contracts testing", (accounts) => {
     const available = await tJoyGenetics.getAvailable();
     const used = await tJoyGenetics.getUsed();
     const totalMinted = (await tJoyMint.getTotalOwners()).toNumber();
+    const genetic = (await tJoyArcade.getGen(1)).toNumber();
+    const id = (await tJoyArcade.getTokenIdFromGen(genetic)).toNumber();
 
     assert.isTrue(available.length === 9);
     assert.isTrue(used.length === 1);
     assert.isTrue(totalMinted === 1);
+    assert.isTrue(id === 1);
   });
 
   it("Mint an nft for a second address", async () => {

@@ -161,6 +161,8 @@ Si quisieramos migralo a Shasta lo haríamos de la siguiente forma:
 
 Para trabajar en el desarrollo de nuestro backend nos conviene tener una base de datos de MongoDB poblada con eventos generados localmente que el producer pueda procesar.
 
+Con el objetivo de escuchar los eventos y guardarlos en una colección de tron hemos preparado unos watchers.
+
 Comentar que, previamente, deberemos de arrancar una base de datos de MongoDB en el puerto 27017 de nuestra máquina.
 
 Una vez hecho esto, los pasos para generar estos eventos serán los siguientes:
@@ -192,3 +194,48 @@ node events-generator/calls.js
 Una vez terminado el proceso, deberíamos tener nuestra base de datos poblada con eventos como los que aparecen en la siguiente imágen.
 
 <img src="./images/mongo-events.png" alt="mongo-events" />
+
+## Contratos
+
+A continuación, vamos a revisar las funcionalicades que contienen los contratos.
+
+<table>
+  <caption>TJoyArcade</caption>
+  <thead>
+    <th>Método</th>
+    <th>Inputs</th>
+    <th>Outputs</th>
+    <th>Eventos lanzados</th>
+    <th>Descripción</th>
+  </thead> 
+  <tbody>
+    <tr>
+      <td>getNftBalance</td>
+      <td>address _address</td>
+      <td>uint256 balanceOf(_address)</td>
+      <td></td>
+      <td>Devuelve la cantidad de nfts de tipo Arcade que tiene esta address. Por cómo estamos gestionando el contrato deberá ser 0 o 1, ya que no se permite la acuñación de más de un nft por address.</td>
+    </tr>
+    <tr>
+      <td>getGen</td>
+      <td>uint256 _tokenId</td>
+      <td>uint256 genetics[_tokenId]</td>
+      <td></td>
+      <td>Devuelve la genética de un nft en concreto a partir de su id.</td>
+    </tr>
+    <tr>
+      <td>getTokenIdFromGen</td>
+      <td>uint256 _gen</td>
+      <td>uint256 tokenIdToGen[_gen];</td>
+      <td></td>
+      <td>Devuelve el id de un nft en concreto a partir de su genética.</td>
+    </tr>
+    <tr>
+      <td>safeMint</td>
+      <td>address to, uint256 gen</td>
+      <td>uint256 tokenId</td>
+      <td>NftMinted(to, tokenId, gen)</td>
+      <td>Es el encargado de, mediante el llamado al método _safeMint del contrato ERC721, mintear el nuevo nft de tipo Arcade. Este método sólo puede ser llamado por un contrato que tenga asignado el rol de minter.</td>
+    </tr>
+  </tbody> 
+</table>

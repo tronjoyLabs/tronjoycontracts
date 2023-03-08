@@ -37,14 +37,13 @@ contract TJoyArcade is
     }
 
     function getTokenIdFromGen(uint256 _gen) public view returns (uint256) {
-        return genetics[_gen];
+        return tokenIdToGen[_gen];
     }
 
-    function safeMint(address to, uint256 gen)
-        public
-        onlyMinter
-        returns (uint256)
-    {
+    function safeMint(
+        address to,
+        uint256 gen
+    ) public onlyMinter returns (uint256) {
         uint256 tokenId = _tokenIdCounter.current();
         genetics[tokenId] = gen;
         tokenIdToGen[gen] = tokenId;
@@ -64,12 +63,9 @@ contract TJoyArcade is
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721, ERC721Enumerable)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view override(ERC721, ERC721Enumerable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }
