@@ -197,15 +197,15 @@ Una vez terminado el proceso, deberíamos tener nuestra base de datos poblada co
 
 ## Contratos
 
-A continuación, vamos a revisar las funcionalicades que contienen los contratos.
+### TJoyArcade
 
 <table>
-  <caption>TJoyArcade</caption>
+  <caption>Métodos</caption>
   <thead>
-    <th>Método</th>
+    <th>Nombre</th>
     <th>Inputs</th>
     <th>Outputs</th>
-    <th>Eventos lanzados</th>
+    <th>Eventos</th>
     <th>Descripción</th>
   </thead> 
   <tbody>
@@ -226,7 +226,7 @@ A continuación, vamos a revisar las funcionalicades que contienen los contratos
     <tr>
       <td>getTokenIdFromGen</td>
       <td>uint256 _gen</td>
-      <td>uint256 tokenIdToGen[_gen];</td>
+      <td>uint256 tokenIdToGen[_gen]</td>
       <td></td>
       <td>Devuelve el id de un nft en concreto a partir de su genética.</td>
     </tr>
@@ -236,6 +236,127 @@ A continuación, vamos a revisar las funcionalicades que contienen los contratos
       <td>uint256 tokenId</td>
       <td>NftMinted(to, tokenId, gen)</td>
       <td>Es el encargado de, mediante el llamado al método _safeMint del contrato ERC721, mintear el nuevo nft de tipo Arcade. Este método sólo puede ser llamado por un contrato que tenga asignado el rol de minter.</td>
+    </tr>
+  </tbody> 
+</table>
+
+<table>
+  <caption>Propiedades</caption>
+  <thead>
+    <th>Nombre</th>
+    <th>Tipo</th>
+    <th>Descripción</th>
+  </thead> 
+  <tbody>
+    <tr>
+      <td>genetics</td>
+      <td>mapping(uint256 => uint256)</td>
+      <td>Se trata de un mapeo que asocia el id de un nft con su genética correspondiente.</td>
+    </tr>
+    <tr>
+      <td>tokenIdToGen</td>
+      <td>mapping(uint256 => uint256)</td>
+      <td>Se trata de un mapeo que asocia la genética de un nft con su id correspondiente.</td>
+    </tr>
+    <tr>
+      <td>_tokenIdCounter</td>
+      <td>Counters.Counter</td>
+      <td>Se trata de un struct que contiene una serie de propiedades que nos permiten gestionar el incremento de, en este caso, el id de un nuevo nft.</td>
+    </tr>
+  </tbody> 
+</table>
+
+<table>
+  <caption>Eventos</caption>
+  <thead>
+    <th>Nombre</th>
+    <th>Propiedades</th>
+    <th>Descripción</th>
+  </thead> 
+  <tbody>
+    <tr>
+      <td>NftMinted</td>
+      <td>address owner, uint256 nftId, uint256 genetic</td>
+      <td>Este evento se lanza al ejecutarse la función safe mint y nos devolverá la información relativa al minteo de un token.</td>
+    </tr>
+  </tbody> 
+</table>
+
+### TJoyMint
+
+<table>
+  <caption>Métodos</caption>
+  <thead>
+    <th>Nombre</th>
+    <th>Inputs</th>
+    <th>Outputs</th>
+    <th>Eventos</th>
+    <th>Descripción</th>
+  </thead> 
+  <tbody>
+    <tr>
+      <td>mint</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td>Desde esta función se llama al método safeMint de TJoyArcade con el objetivo de mintear un token. Podemos hacer esta llamada ya que este contrato tiene asignado el rol de minter.</td>
+    </tr>
+    <tr>
+      <td>changeNfts</td>
+      <td>ITJoyArcade _nfts</td>
+      <td></td>
+      <td></td>
+      <td>Por medio de esta función le pasamos los métodos del contrato TJoyArcade que figuran en su correspondiente interfaz.</td>
+    </tr>
+    <tr>
+      <td>changeGen</td>
+      <td>ITJoyGenetics _gen</td>
+      <td></td>
+      <td></td>
+      <td>Por medio de esta función le pasamos los métodos del contrato TJoyGenetics que figuran en su correspondiente interfaz.</td>
+    </tr>
+    <tr>
+      <td>getTotalOwners</td>
+      <td></td>
+      <td>uint256 totalMinted</td>
+      <td></td>
+      <td>Devuelve el número total de tokens minteados por el contrato.</td>
+    </tr>
+  </tbody> 
+</table>
+
+<table>
+  <caption>Propiedades</caption>
+  <thead>
+    <th>Nombre</th>
+    <th>Tipo</th>
+    <th>Descripción</th>
+  </thead> 
+  <tbody>
+    <tr>
+      <td>gen</td>
+      <td>ITJoyGenetics</td>
+      <td>Esta propiedad almacena los métodos declarados en la interfact de TJoyGenetics.</td>
+    </tr>
+    <tr>
+      <td>nfts</td>
+      <td>ITJoyArcade</td>
+      <td>Esta propiedad almacena los métodos declarados en la interfact de TJoyArcade.</td>
+    </tr>
+    <tr>
+      <td>totalMinted</td>
+      <td>uint256</td>
+      <td>Guarda el total de tokens minteados.</td>
+    </tr>
+    <tr>
+      <td>maxMint</td>
+      <td>uint256</td>
+      <td>Guarda el máximo de tokens que el administrados determina que pueden mintearse. El valor es seteado en el constructor en el momento del deploy.</td>
+    </tr>
+    <tr>
+      <td>owners</td>
+      <td>mapping(address => bool)</td>
+      <td>Almacena las direcciones públicas de los propietarios asonciándolas a un valor true.</td>
     </tr>
   </tbody> 
 </table>
