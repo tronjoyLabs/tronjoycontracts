@@ -270,7 +270,7 @@ Una vez terminado el proceso, deberíamos tener nuestra base de datos poblada co
   <caption>Eventos</caption>
   <thead>
     <th>Nombre</th>
-    <th>Propiedades</th>
+    <th>Parámetros</th>
     <th>Descripción</th>
   </thead> 
   <tbody>
@@ -336,7 +336,7 @@ Una vez terminado el proceso, deberíamos tener nuestra base de datos poblada co
     <tr>
       <td>gen</td>
       <td>ITJoyGenetics</td>
-      <td>Esta propiedad almacena los métodos declarados en la interfact de TJoyGenetics.</td>
+      <td>Esta propiedad almacena los métodos declarados en la interfaz de TJoyGenetics.</td>
     </tr>
     <tr>
       <td>nfts</td>
@@ -357,6 +357,279 @@ Una vez terminado el proceso, deberíamos tener nuestra base de datos poblada co
       <td>owners</td>
       <td>mapping(address => bool)</td>
       <td>Almacena las direcciones públicas de los propietarios asonciándolas a un valor true.</td>
+    </tr>
+  </tbody> 
+</table>
+
+### TJoyGenetics
+
+<table>
+  <caption>Métodos</caption>
+  <thead>
+    <th>Nombre</th>
+    <th>Inputs</th>
+    <th>Outputs</th>
+    <th>Eventos</th>
+    <th>Descripción</th>
+  </thead> 
+  <tbody>
+    <tr>
+      <td>getAvailable</td>
+      <td>uint256[] memory</td>
+      <td>uint256[] available</td>
+      <td></td>
+      <td>Devuelve las genéticas disponibles.</td>
+    </tr>
+    <tr>
+      <td>addGenetic</td>
+      <td>uint256 _gen</td>
+      <td></td>
+      <td></td>
+      <td>Agrega una nueva genética al array de disponibles.</td>
+    </tr>
+    <tr>
+      <td>addGenetics</td>
+      <td>uint256[] memory _genetics</td>
+      <td></td>
+      <td></td>
+      <td>Agrega una nuevas genéticas al array de disponibles.</td>
+    </tr>
+    <tr>
+      <td>getUsed</td>
+      <td></td>
+      <td>uint256[] memory used</td>
+      <td></td>
+      <td>Devuelve las genéticas ya asignadas.</td>
+    </tr>
+    <tr>
+      <td>totalUsed</td>
+      <td></td>
+      <td>uint256[] used.length</td>
+      <td></td>
+      <td>Devuelve el número total de genéticas asignadas.</td>
+    </tr>
+    <tr>
+      <td>totalAvailable</td>
+      <td></td>
+      <td>uint256 available.length</td>
+      <td></td>
+      <td>Devuelve el número total de genéticas disponibles.</td>
+    </tr>
+    <tr>
+      <td>extractGenetic</td>
+      <td></td>
+      <td>uint256 genetica</td>
+      <td></td>
+      <td>Devuelve la genética asignada de manera aleatoria para un nuevo nft.</td>
+    </tr>
+  </tbody> 
+</table>
+
+<table>
+  <caption>Propiedades</caption>
+  <thead>
+    <th>Nombre</th>
+    <th>Tipo</th>
+    <th>Descripción</th>
+  </thead> 
+  <tbody>
+    <tr>
+      <td>available</td>
+      <td>uint256[]</td>
+      <td>Contiene un array con las genéticas disponibles.</td>
+    </tr>
+    <tr>
+      <td>used</td>
+      <td>uint256[]</td>
+      <td>Contiene un array con las genéticas ya asignadas.</td>
+    </tr>
+    <tr>
+      <td>lastMintedToken</td>
+      <td>uint256</td>
+      <td>Almacena la genética del último token minteado.</td>
+    </tr>
+  </tbody> 
+</table>
+
+### TJoyTournaments
+
+<table>
+  <caption>Métodos</caption>
+  <thead>
+    <th>Nombre</th>
+    <th>Inputs</th>
+    <th>Outputs</th>
+    <th>Eventos</th>
+    <th>Descripción</th>
+  </thead> 
+  <tbody>
+    <tr>
+      <td>getContractBalance</td>
+      <td></td>
+      <td>uint256 contractAddress.balance</td>
+      <td></td>
+      <td>Devuelve el balance del contrato.</td>
+    </tr>
+    <tr>
+      <td>createTournament</td>
+      <td>uint256 _price,
+        uint256 _fee,
+        uint256 _initPoolAmount,
+        uint256 _beginingDate,
+        uint256 _finishDate,
+        IERC721 _nft</td>
+      <td></td>
+      <td>TournamentCreated</td>
+      <td>Crea un nuevo torneo.</td>
+    </tr>
+    <tr>
+      <td>updateTournament</td>
+      <td>uint256 _tournamentId,
+        uint256 _price,
+        uint256 _fee,
+        uint256 _initPoolAmount,
+        uint256 _beginingDate,
+        uint256 _finishDate,
+        bool _paused,
+        IERC721 _nft</td>
+      <td></td>
+      <td>TournamentUpdated</td>
+      <td>Actualiza un torneo ya existente.</td>
+    </tr>
+    <tr>
+      <td>registerPlayer</td>
+      <td>uint256 _tournamentId</td>
+      <td></td>
+      <td>PlayerRegistered</td>
+      <td>Registra un nuevo jugador en uno de los torneos previamente creados.</td>
+    </tr>
+    <tr>
+      <td>addAward</td>
+      <td>uint256 _tournamentId,
+        address _player,
+        uint256 _amount,
+        uint256 _nftId,
+        IERC721 _nft</td>
+      <td></td>
+      <td>AwardAdded</td>
+      <td>Agrega un nuevo premio a un torneo ya existente.</td>
+    </tr>
+    <tr>
+      <td>updateAward</td>
+      <td>uint256 _tournamentId,
+        address _player,
+        uint256 _amount,
+        uint256 _nftId,
+        IERC721 _nft,
+        bool _reclaimable</td>
+      <td></td>
+      <td>AwardUpdated</td>
+      <td>Actualiza una de los premios ya incluídos en alguno de los torneos.</td>
+    </tr>
+    <tr>
+      <td>reclaimAward</td>
+      <td>uint256 _tournamentId</td>
+      <td></td>
+      <td>AwardReclaimed</td>
+      <td>Reparte a un jugador el premio que ha ganado dentro de un determinado torneo.</td>
+    </tr>
+  </tbody> 
+</table>
+
+<table>
+  <caption>Propiedades</caption>
+  <thead>
+    <th>Nombre</th>
+    <th>Tipo</th>
+    <th>Descripción</th>
+  </thead> 
+  <tbody>
+    <tr>
+      <td>contractOwner</td>
+      <td>address</td>
+      <td>Contiene la address propietaria del contrato.</td>
+    </tr>
+    <tr>
+      <td>contractAddress</td>
+      <td>address</td>
+      <td>Contiene la dirección (clave pública) del contrato.</td>
+    </tr>
+    <tr>
+      <td>businessBalance</td>
+      <td>uint256</td>
+      <td>La cantidad de TRX de la que dispone el owner de contrato fuera de los pooles.</td>
+    </tr>
+    <tr>
+      <td>nextTournamentId</td>
+      <td>uint256</td>
+      <td>Es el id que asignaremos al siguiente torneo que se cree.</td>
+    </tr>
+    <tr>
+      <td>awards</td>
+      <td>uint256 => mapping(address => Award)</td>
+      <td>Mapeo que asocia al id de un torneo otro mapeo que a su vez contiene un objeto de tipo Award asociado a la address de un jugador.</td>
+    </tr>
+    <tr>
+      <td>tournaments</td>
+      <td>uint256 => Tournament</td>
+      <td>Mapeo que asocia al id de un torneo un objeto de tipo Tournament (que es el torneo en sí).</td>
+    </tr>
+  </tbody> 
+</table>
+
+<table>
+  <caption>Eventos</caption>
+  <thead>
+    <th>Nombre</th>
+    <th>Parámetros</th>
+    <th>Descripción</th>
+  </thead> 
+  <tbody>
+    <tr>
+      <td>TournamentCreated</td>
+      <td>uint256 tournamentId,
+        uint256 price,
+        uint256 fee,
+        uint256 initPool,
+        uint256 beginingDate,
+        uint256 finishDate,
+        IERC721 nft</td>
+      <td>Evento que se lanza cada vez que se ejecuta un nuevo torneo.</td>
+    </tr>
+    <tr>
+      <td>TournamentUpdated</td>
+      <td>uint256 tournamentId,
+        uint256 price,
+        uint256 fee,
+        uint256 initPool,
+        uint256 beginingDate,
+        uint256 finishDate,
+        IERC721 nft</td>
+      <td>Evento que se lanza cada vez que se actualiza un torneo ya existente.</td>
+    </tr>
+    <tr>
+      <td>PlayerRegistered</td>
+      <td>uint256 tournamentId, address playerAddress</td>
+      <td>Se emite este evento cada vez que se registra un nuevo jugador.</td>
+    </tr>
+    <tr>
+      <td>Award added</td>
+      <td>uint256 tournamentId,
+        address playerAddress,
+        uint256 amount,
+        uint256 nftId,
+        IERC721 nft</td>
+      <td>Se emite este evento cada que un nuevo premio se asigna dentro de un torneo.</td>
+    </tr>
+    <tr>
+      <td>Award updated</td>
+      <td>uint256 tournamentId,
+        address playerAddress,
+        uint256 amount,
+        uint256 nftId,
+        IERC721 nft,
+        bool reclaimable</td>
+      <td>Se emite tras haber actualizado un torneo.</td>
     </tr>
   </tbody> 
 </table>
