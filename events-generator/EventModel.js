@@ -3,7 +3,7 @@ const mongooseLong = require("mongoose-long");
 
 mongooseLong(mongoose);
 
-const tronEventSchema = new mongoose.Schema(
+const eventSchema = new mongoose.Schema(
   {
     block: Number,
     timestamp: mongoose.Schema.Types.Long,
@@ -36,10 +36,10 @@ const tronEventSchema = new mongoose.Schema(
     unconfirmed: Boolean,
   },
   {
-    collection: "tronEvents",
+    collection: "events",
   }
 );
 
-const TronEvent = mongoose.model("TronEvent", tronEventSchema);
+const Event = mongoose.model("Event", eventSchema);
 
-module.exports = TronEvent;
+module.exports = Event;

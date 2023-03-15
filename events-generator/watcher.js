@@ -1,6 +1,6 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const TronEvent = require("./EventModel");
+const Event = require("./EventModel");
 const { instanceContracts } = require("./instanceContracts");
 
 mongoose.set("strictQuery", false);
@@ -15,13 +15,13 @@ mongoose
   });
 
 const init = async () => {
-  await TronEvent.deleteMany();
+  await Event.deleteMany();
 
   const { tournamentsOwner, arcadeOwner } = await instanceContracts();
 
   arcadeOwner.NftMinted().watch(async (error, result) => {
     if (!error) {
-      await TronEvent.create(result);
+      await Event.create(result);
 
       console.log("Nft minted: ", result);
     } else {
@@ -31,7 +31,7 @@ const init = async () => {
 
   tournamentsOwner.TournamentCreated().watch(async (error, result) => {
     if (!error) {
-      await TronEvent.create(result);
+      await Event.create(result);
 
       console.log("Tournament created event: ", result);
     } else {
@@ -41,7 +41,7 @@ const init = async () => {
 
   tournamentsOwner.TournamentUpdated().watch(async (error, result) => {
     if (!error) {
-      await TronEvent.create(result);
+      await Event.create(result);
 
       console.log("Tournament updated event: ", result);
     } else {
@@ -51,7 +51,7 @@ const init = async () => {
 
   tournamentsOwner.PlayerRegistered().watch(async (error, result) => {
     if (!error) {
-      await TronEvent.create(result);
+      await Event.create(result);
 
       console.log("Player registered event: ", result);
     } else {
@@ -61,7 +61,7 @@ const init = async () => {
 
   tournamentsOwner.AwardAdded().watch(async (error, result) => {
     if (!error) {
-      await TronEvent.create(result);
+      await Event.create(result);
 
       console.log("Award added event: ", result);
     } else {
@@ -71,7 +71,7 @@ const init = async () => {
 
   tournamentsOwner.AwardUpdated().watch(async (error, result) => {
     if (!error) {
-      await TronEvent.create(result);
+      await Event.create(result);
 
       console.log("Award updated event: ", result);
     } else {
@@ -81,7 +81,7 @@ const init = async () => {
 
   tournamentsOwner.AwardReclaimed().watch(async (error, result) => {
     if (!error) {
-      await TronEvent.create(result);
+      await Event.create(result);
 
       console.log("Award reclaimed event: ", result);
     } else {

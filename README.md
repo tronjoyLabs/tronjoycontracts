@@ -199,8 +199,9 @@ Una vez terminado el proceso, deberíamos tener nuestra base de datos poblada co
 
 ### TJoyArcade
 
+#### Métodos
+
 <table>
-  <caption>Métodos</caption>
   <thead>
     <th>Nombre</th>
     <th>Inputs</th>
@@ -240,8 +241,9 @@ Una vez terminado el proceso, deberíamos tener nuestra base de datos poblada co
   </tbody> 
 </table>
 
+#### Propiedades
+
 <table>
-  <caption>Propiedades</caption>
   <thead>
     <th>Nombre</th>
     <th>Tipo</th>
@@ -266,8 +268,9 @@ Una vez terminado el proceso, deberíamos tener nuestra base de datos poblada co
   </tbody> 
 </table>
 
+#### Eventos
+
 <table>
-  <caption>Eventos</caption>
   <thead>
     <th>Nombre</th>
     <th>Parámetros</th>
@@ -284,8 +287,9 @@ Una vez terminado el proceso, deberíamos tener nuestra base de datos poblada co
 
 ### TJoyMint
 
+#### Métodos
+
 <table>
-  <caption>Métodos</caption>
   <thead>
     <th>Nombre</th>
     <th>Inputs</th>
@@ -325,8 +329,9 @@ Una vez terminado el proceso, deberíamos tener nuestra base de datos poblada co
   </tbody> 
 </table>
 
+#### Propiedades
+
 <table>
-  <caption>Propiedades</caption>
   <thead>
     <th>Nombre</th>
     <th>Tipo</th>
@@ -363,8 +368,9 @@ Una vez terminado el proceso, deberíamos tener nuestra base de datos poblada co
 
 ### TJoyGenetics
 
+#### Métodos
+
 <table>
-  <caption>Métodos</caption>
   <thead>
     <th>Nombre</th>
     <th>Inputs</th>
@@ -425,8 +431,9 @@ Una vez terminado el proceso, deberíamos tener nuestra base de datos poblada co
   </tbody> 
 </table>
 
+#### Propiedades
+
 <table>
-  <caption>Propiedades</caption>
   <thead>
     <th>Nombre</th>
     <th>Tipo</th>
@@ -453,8 +460,9 @@ Una vez terminado el proceso, deberíamos tener nuestra base de datos poblada co
 
 ### TJoyTournaments
 
+#### Métodos
+
 <table>
-  <caption>Métodos</caption>
   <thead>
     <th>Nombre</th>
     <th>Inputs</th>
@@ -536,8 +544,9 @@ Una vez terminado el proceso, deberíamos tener nuestra base de datos poblada co
   </tbody> 
 </table>
 
+#### Propiedades
+
 <table>
-  <caption>Propiedades</caption>
   <thead>
     <th>Nombre</th>
     <th>Tipo</th>
@@ -577,8 +586,9 @@ Una vez terminado el proceso, deberíamos tener nuestra base de datos poblada co
   </tbody> 
 </table>
 
+#### Eventos
+
 <table>
-  <caption>Eventos</caption>
   <thead>
     <th>Nombre</th>
     <th>Parámetros</th>
