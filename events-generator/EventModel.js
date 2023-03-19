@@ -5,11 +5,12 @@ mongooseLong(mongoose);
 
 const eventSchema = new mongoose.Schema(
   {
-    block: Number,
-    timestamp: mongoose.Schema.Types.Long,
-    contract: String,
-    name: String,
-    transaction: String,
+    _id: { type: String, required: true },
+    block: { type: Number, required: true },
+    timestamp: { type: mongoose.Schema.Types.Long, required: true },
+    contract: { type: String, required: true },
+    name: { type: String, required: true },
+    transaction: { type: String, required: true },
     result: {
       0: String,
       1: String,
@@ -32,11 +33,12 @@ const eventSchema = new mongoose.Schema(
       amount: String,
       reclaimable: Boolean,
     },
-    resourceNode: String,
-    unconfirmed: Boolean,
+    resourceNode: { type: String, required: true },
+    unconfirmed: { type: Boolean, required: true },
   },
   {
     collection: "events",
+    timestamps: true,
   }
 );
 

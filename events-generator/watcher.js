@@ -1,4 +1,5 @@
 require("dotenv").config();
+const { v4 } = require("uuid");
 const mongoose = require("mongoose");
 const Event = require("./EventModel");
 const { instanceContracts } = require("./instanceContracts");
@@ -21,6 +22,8 @@ const init = async () => {
 
   arcadeOwner.NftMinted().watch(async (error, result) => {
     if (!error) {
+      result._id = `${result.transaction}_${v4()}`;
+
       await Event.create(result);
 
       console.log("Nft minted: ", result);
@@ -31,6 +34,8 @@ const init = async () => {
 
   tournamentsOwner.TournamentCreated().watch(async (error, result) => {
     if (!error) {
+      result._id = `${result.transaction}_${v4()}`;
+
       await Event.create(result);
 
       console.log("Tournament created event: ", result);
@@ -41,6 +46,8 @@ const init = async () => {
 
   tournamentsOwner.TournamentUpdated().watch(async (error, result) => {
     if (!error) {
+      result._id = `${result.transaction}_${v4()}`;
+
       await Event.create(result);
 
       console.log("Tournament updated event: ", result);
@@ -51,6 +58,8 @@ const init = async () => {
 
   tournamentsOwner.PlayerRegistered().watch(async (error, result) => {
     if (!error) {
+      result._id = `${result.transaction}_${v4()}`;
+
       await Event.create(result);
 
       console.log("Player registered event: ", result);
@@ -61,6 +70,8 @@ const init = async () => {
 
   tournamentsOwner.AwardAdded().watch(async (error, result) => {
     if (!error) {
+      result._id = `${result.transaction}_${v4()}`;
+
       await Event.create(result);
 
       console.log("Award added event: ", result);
@@ -71,6 +82,8 @@ const init = async () => {
 
   tournamentsOwner.AwardUpdated().watch(async (error, result) => {
     if (!error) {
+      result._id = `${result.transaction}_${v4()}`;
+
       await Event.create(result);
 
       console.log("Award updated event: ", result);
@@ -81,6 +94,8 @@ const init = async () => {
 
   tournamentsOwner.AwardReclaimed().watch(async (error, result) => {
     if (!error) {
+      result._id = `${result.transaction}_${v4()}`;
+
       await Event.create(result);
 
       console.log("Award reclaimed event: ", result);
