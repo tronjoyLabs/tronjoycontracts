@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 const { formattedAddresses } = require("./formattedAddresses");
 
 const { mintAddress, geneticsAddress, arcadeAddress } = formattedAddresses;
@@ -57,6 +58,11 @@ const init = async () => {
     shouldPollResponse: false,
   });
 
+  await mintOwner.mint().send({
+    feeLimit: 800000000,
+    shouldPollResponse: false,
+  });
+
   await mintAccountOne.mint().send({
     feeLimit: 800000000,
     shouldPollResponse: false,
@@ -72,6 +78,16 @@ const init = async () => {
     shouldPollResponse: false,
   });
 
+  const ownerNftIdBigNumber = await arcadeOwner
+    .tokenOfOwnerByIndex("TEFccUNfgWyjuiiUo9LfNSb56jLhBo7pCV", 0)
+    .call();
+
+  const ownerNftId = await ownerNftIdBigNumber.toNumber();
+
+  await arcadeOwner
+    .approve(formattedAddresses.tournamentsAddress, ownerNftId)
+    .send({ feeLimit: 800000000, shouldPollResponse: false });
+
   await tournamentsOwner
     .createTournament(10, 30, 100, beginingDate, finishDate, arcadeAddress)
     .send({
@@ -87,6 +103,8 @@ const init = async () => {
       feeLimit: 800000000,
       shouldPollResponse: false,
     });
+
+  await sleep(5000);
 
   await tournamentsOwner
     .updateTournament(
@@ -134,6 +152,19 @@ const init = async () => {
       100,
       0,
       "0x0000000000000000000000000000000000000000"
+    )
+    .send({
+      feeLimit: 800000000,
+      shouldPollResponse: false,
+    });
+
+  await tournamentsOwner
+    .addAward(
+      1000000000,
+      "TLVi2DGjgfq6JDa7wXn9eASwpGJZVdcUN8",
+      0,
+      ownerNftId,
+      formattedAddresses.arcadeAddress
     )
     .send({
       feeLimit: 800000000,
