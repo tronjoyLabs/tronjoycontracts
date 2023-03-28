@@ -161,7 +161,7 @@ const init = async () => {
   await tournamentsOwner
     .addAward(
       1000000000,
-      "TLVi2DGjgfq6JDa7wXn9eASwpGJZVdcUN8",
+      "TB9rhy2tVzp83mHU6G7DLFS2U1KYVaP5RZ",
       0,
       ownerNftId,
       formattedAddresses.arcadeAddress
@@ -190,6 +190,11 @@ const init = async () => {
   await sleep(5000);
 
   await tournamentsAccountOne.reclaimAward(1000000000).send({
+    feeLimit: 800000000,
+    shouldPollResponse: false,
+  });
+
+  await tournamentsAccountTwo.reclaimAward(1000000000).send({
     feeLimit: 800000000,
     shouldPollResponse: false,
   });
