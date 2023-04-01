@@ -8,7 +8,7 @@ import "./ITJoyGenetics.sol";
 import "./MinterRole.sol";
 
 contract TJoyMint is Ownable, MinterRole {
-    mapping(address => bool) public owners;
+    mapping(address => uint256) public owners;
 
     IERC721[] private nftsCollections;
 
@@ -23,6 +23,8 @@ contract TJoyMint is Ownable, MinterRole {
     constructor(uint256 _maxMint) {
         maxMint = _maxMint;
     }
+
+    event AddressWhitelisted(address _address);
 
     function addNftsCollections(IERC721 _nfts) public onlyOwner {
         nftsCollections[nftsCollections.length] = _nfts;
@@ -40,16 +42,24 @@ contract TJoyMint is Ownable, MinterRole {
         return totalMinted;
     }
 
+    function addWhitelists(address[] memory wallets) public {
+        for (uint256 i = 0; i < wallets.length; i++) {
+            owners[wallets[i]] = 1;
+
+            emit AddressWhitelisted(wallets[i]);
+        }
+    }
+
     function mint() public {
         require(maxMint > totalMinted, "max minted");
 
-        require(!owners[msg.sender], "owner as minted");
+        require(owners[msg.sender] == 1, "sender is not whitelisted");
 
         totalMinted = totalMinted + 1;
 
         uint256 _gen = gen.extractGenetic();
 
-        owners[msg.sender] = true;
+        owners[msg.sender] = 2;
 
         nfts.safeMint(msg.sender, _gen);
     }

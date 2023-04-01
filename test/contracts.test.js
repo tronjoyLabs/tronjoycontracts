@@ -52,6 +52,30 @@ contract("Contracts testing", (accounts) => {
     assert.isTrue(used.length === 0);
   });
 
+  it("Add addresses to whitelist", async () => {
+    await tJoyMint.addWhitelists([
+      testAddress,
+      accounts[1],
+      accounts[2],
+      accounts[3],
+      accounts[4],
+    ]);
+
+    const testAddressState = await tJoyMint.owners(testAddress);
+    const accountOneState = await tJoyMint.owners(accounts[1]);
+    const accountTwoState = await tJoyMint.owners(accounts[2]);
+    const accountThreeState = await tJoyMint.owners(accounts[3]);
+    const accountFourState = await tJoyMint.owners(accounts[4]);
+
+    await sleep(5000);
+
+    assert.isTrue(testAddressState.toNumber() === 1);
+    assert.isTrue(accountOneState.toNumber() === 1);
+    assert.isTrue(accountTwoState.toNumber() === 1);
+    assert.isTrue(accountThreeState.toNumber() === 1);
+    assert.isTrue(accountFourState.toNumber() === 1);
+  });
+
   it("Mint an nft for an address", async () => {
     await tJoyMint.mint({ from: accounts[1] });
     const available = await tJoyGenetics.getAvailable();
@@ -59,11 +83,13 @@ contract("Contracts testing", (accounts) => {
     const totalMinted = (await tJoyMint.getTotalOwners()).toNumber();
     const genetic = (await tJoyArcade.getGen(1)).toNumber();
     const id = (await tJoyArcade.getTokenIdFromGen(genetic)).toNumber();
+    const accountOneState = await tJoyMint.owners(accounts[1]);
 
     assert.isTrue(available.length === 9);
     assert.isTrue(used.length === 1);
     assert.isTrue(totalMinted === 1);
     assert.isTrue(id === 1);
+    assert.isTrue(accountOneState.toNumber() === 2);
   });
 
   it("Mint an nft for a second address", async () => {

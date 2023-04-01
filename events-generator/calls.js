@@ -58,6 +58,20 @@ const init = async () => {
     shouldPollResponse: false,
   });
 
+  await mintOwner
+    .addWhitelists([
+      "TEFccUNfgWyjuiiUo9LfNSb56jLhBo7pCV",
+      "TTwP5QU2hCE3ho8WuNB811AD9jMTSoabKp",
+      "TB9rhy2tVzp83mHU6G7DLFS2U1KYVaP5RZ",
+      "TVxyvEH6DjbYcyygrSrURF88WZBjicWVD6",
+    ])
+    .send({
+      feeLimit: 800000000,
+      shouldPollResponse: false,
+    });
+
+  await sleep(5000);
+
   await mintOwner.mint().send({
     feeLimit: 800000000,
     shouldPollResponse: false,

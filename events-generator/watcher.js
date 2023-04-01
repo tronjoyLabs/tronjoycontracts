@@ -18,7 +18,20 @@ mongoose
 const init = async () => {
   await Event.deleteMany();
 
-  const { tournamentsOwner, arcadeOwner } = await instanceContracts();
+  const { tournamentsOwner, arcadeOwner, mintOwner } =
+    await instanceContracts();
+
+  mintOwner.AddressWhitelisted().watch(async (error, result) => {
+    if (!error) {
+      result._id = `${result.transaction}_${v4()}`;
+
+      await Event.create(result);
+
+      console.log("Address whitelisted: ", result);
+    } else {
+      console.log(`AddressesWhitelisted error: ${error}`);
+    }
+  });
 
   arcadeOwner.NftMinted().watch(async (error, result) => {
     if (!error) {

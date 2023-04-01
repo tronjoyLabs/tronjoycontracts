@@ -99,6 +99,8 @@ También podemos ver que utilizamos diferentes variables de entorno (opción -e)
 
 Dentro de la carpeta test encontraremos un archivo llamado contracts.test.js. Es aquí donde se encuentran nuestros tests.
 
+Para lanzar los tests es necesario haber arrancado previamente el nodo como explicamos anteriormente.
+
 Para ejecutarlos ejecutaremos el siguiente comando:
 
 ```sh
@@ -320,6 +322,13 @@ Una vez terminado el proceso, deberíamos tener nuestra base de datos poblada co
       <td>Por medio de esta función le pasamos los métodos del contrato TJoyGenetics que figuran en su correspondiente interfaz.</td>
     </tr>
     <tr>
+      <td>addWhitelists</td>
+      <td>address[] memory wallets</td>
+      <td></td>
+      <td>AddressesWhitelisted(address[] addresses)</td>
+      <td>Agregamos las addresses al array de owners con valor 1 (whitelisteado pero sin token minteado).</td>
+    </tr>
+    <tr>
       <td>getTotalOwners</td>
       <td></td>
       <td>uint256 totalMinted</td>
@@ -360,8 +369,8 @@ Una vez terminado el proceso, deberíamos tener nuestra base de datos poblada co
     </tr>
     <tr>
       <td>owners</td>
-      <td>mapping(address => bool)</td>
-      <td>Almacena las direcciones públicas de los propietarios asonciándolas a un valor true.</td>
+      <td>mapping(address => uint256)</td>
+      <td>Almacena las direcciones públicas de los propietarios asonciándolas a un valor 1 si están habilitadas para mintear un token (se encuentran dentro de la whitelist) y 2 si ya lo tienen minteado.</td>
     </tr>
   </tbody> 
 </table>
