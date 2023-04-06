@@ -57,7 +57,7 @@ const init = async () => {
     } else if (checkedGenetics > genetics.length) {
       console.log("Maybe, there are some repeated genetics");
     } else {
-      throw new Error("Some genetics have not been added. Check the logs");
+      throw new Error("Some genetics may have not been added. Check the logs");
     }
 
     process.exit(0);
