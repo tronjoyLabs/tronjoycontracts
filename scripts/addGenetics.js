@@ -13,7 +13,10 @@ const init = async () => {
     );
 
     const genetics = geneticsText.split("\n");
-
+    /*const genetics = [
+      1000000001, 1000000002, 1000000003, 1000000004, 1000000005, 1000000006,
+      1000000007, 1000000008, 1000000009, 1000000010,
+    ];*/
     console.log("We are going to add the following genetics:");
     console.log(genetics);
 
@@ -32,9 +35,32 @@ const init = async () => {
 
     console.log("We are about to inject the genetics");
 
+    // Suponiendo que genetics es un array de string
+    let geneticsBigNumber = [];
+    
+    const newGenetics = genetics.map( (gen) => {
+
+      return gen;
+      return (gen.slice(6));
+    });
+
+
     await geneticsInstance
-      .addGenetics(genetics)
+      .addGenetics(newGenetics)
       .send({ feeLimit: 800000000, shouldPollResponse: false });
+
+   /* for (let i = 0; i < newGenetics.length; i++) {
+      await geneticsInstance
+      .addGenetic(parseInt(newGenetics[i]))
+      .send({ feeLimit: 800000000, shouldPollResponse: true });
+    }*/
+    console.log(newGenetics);
+
+   /* for (let i = 0; i < newGenetics.length; i++) {
+      geneticsBigNumber.push(ownerTronWeb.toBigNumber((newGenetics[i])));
+    }*/
+
+
 
     console.log("Let's get all the genetics");
 
@@ -44,7 +70,7 @@ const init = async () => {
 
     for (let i = 0; i < availableGenetics.length; i++) {
       const contractGenetic = availableGenetics[i].toString();
-      if (genetics.includes(contractGenetic)) {
+      if (newGenetics.includes(contractGenetic)) {
         console.log(
           `This genetic has been send and has been found in our contract response: ${contractGenetic}`
         );
@@ -62,7 +88,7 @@ const init = async () => {
 
     process.exit(0);
   } catch (error) {
-    console.log(`There is the following error in the process: ${error}`);
+    console.log(`There is the following error in the process:`, error);
     process.exit(1);
   }
 };
