@@ -16,9 +16,9 @@ contract TJoyMint is Ownable, MinterRole {
 
   ITJoyArcade private nfts;
 
-  uint256 totalMinted = 0;
+  uint256 public totalMinted = 0;
 
-  uint256 maxMint;
+  uint256 public maxMint;
 
   constructor(uint256 _maxMint) {
     maxMint = _maxMint;
