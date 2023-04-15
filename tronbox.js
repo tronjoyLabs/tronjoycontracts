@@ -21,8 +21,7 @@ Then, run the migration with:
       network_id: "1",
     },
     shasta: {
-      privateKey:
-        "e2e39d1cfaf8ff68cf1e1cdff967e43f0d966e2e4fc4d69aeffa3407f9b329d5",
+      privateKey: "changeme",
       userFeePercentage: 50,
       feeLimit: 1000 * 1e6,
       fullHost: "https://api.shasta.trongrid.io",
@@ -37,7 +36,7 @@ Then, run the migration with:
     },
     development: {
       // For trontools/quickstart docker image
-      privateKey: "CHANGEME",
+      privateKey: "changeme",
       userFeePercentage: 0,
       feeLimit: 1000 * 1e6,
       fullHost: "http://127.0.0.1:9090",
